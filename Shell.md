@@ -188,6 +188,7 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     * `-maxdepth / -mindepth number` (limit the search to a specific depth of directories)
     * `-delete` (delete the files found (use with caution))
 
+    <br>
 
     ```shell
     grep -E '^[^e]+$' /usr/share/dict/linux.words | wc -l
@@ -207,6 +208,7 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     >
     > `wc -l` stands for **word count**, and the `-l` option tells it to count lines
 
+    <br>
 
     ```shell
     find . -name "*.txt" -mtime -7 -exec cat {} \;
