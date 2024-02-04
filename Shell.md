@@ -179,6 +179,8 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
 * `$ find PATH` - Search for files in a directory hierarchy
     * `-type f` (search only for files)
     * `-type d` (search only for directories)
+    * `-inum inode#` (search for inode #)
+    * `-print` (print the PATH of the file)
     * `-name file_name` (search for files by name)
         * `-iname` (case-insensitively search for files by name)
     * `-size` (search for files by size)
@@ -216,6 +218,8 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     > This command searches for and displays the contents of all .txt files in the current directory and its subdirectories that were modified in the last 7 days.
     
     > `find` is the command used to search for files in a directory hierarchy
+    >
+    > `.` specifies the starting PATH for the search, which is the current directory (denoted by .)
     >
     > `-name "*.txt"` tells `find` to match files whose names end with .txt.
     >
