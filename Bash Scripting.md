@@ -1,7 +1,14 @@
 # Bash Scripting
 
-`#!/bin/bash` <br>
-.sh file (Bash script file) (Shell executable file)
+`Bash` (Bourne Again Shell) is a specific type of shell. It was created as an improved replacement for the original Bourne shell(sh), which includes rich feature set like command line editing, job control, shell functions, etc.
+
+`.sh file` refers to **Bash script file** or **Shell executable file**
+
+`#!/bin/bash` at the beginning of a **.sh file** tells the OS to use the Bash shell to interpret and execute the commands contained in the script file.
+
+> **Q: What's the main difference between 'shell' and 'bash'?**
+>
+> **A:** "shell" is a command-line interpreter that provides a user interface for accessing an OS's services, whereas "Bash" is a specific implementation of a shell, offering extended features and functionalities beyond those found in the traditional Bourne shell.
 
 ## Comparison Operators
 

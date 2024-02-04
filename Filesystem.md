@@ -300,8 +300,10 @@ cp foo.c /bar
 
 This is a very ***cheap*** operation because it actually just modifies the mapping of the directory instead of the files themselves. What this does at the low level is:
 
-* Remove one directory entry
-* Add another entry into a directory, possibly the same one or another directory
+* **Remove one directory entry** <br>
+`mv` command removes the **directory entry** that maps the file's name to its inode # in the source directory. This operation does not touch the file's data or its inode.
+* **Add another entry into a directory** <br>
+`mv` command then creates a new directory entry in the target directory. This new entry maps the file's name (which may be unchanged if you're moving the file or changed if you're renaming it) to the same inode. If the target directory is the same as the source directory (in the case of a rename), this step modifies the existing directory file to include the new name mapping.
 
 `cp` on the other hand is more ***expensive*** because it has to actually iterate over the content of the file.
 
@@ -434,9 +436,9 @@ Wear leveling is a process that aims to distribute write and erase cycles evenly
 ### Data Deletion and Recovery
 Due to the process of Wearing Leveling, when a file is deleted, the OS typically removes the file's entry from the file system table(current directory), marking the space as available for new data. However, the actual data remains on the drive until it is overwritten.
 
-**Why OS doesn't directly erase the space by overwritting the new data?**
-
-If the kernel were to erase the data immediately upon deletion, it would interfere with the wear leveling process, leading to uneven wear and potentially reducing the lifespan of the storage device.
+> **Why OS doesn't directly erase the space by overwritting the new data?**
+>
+> If the kernel were to erase the data immediately upon deletion, it would interfere with the wear leveling process, leading to uneven wear and potentially reducing the lifespan of the storage device.
 
 ---
 
