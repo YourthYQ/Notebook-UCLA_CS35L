@@ -288,44 +288,22 @@ filename: Too many levels of symbolic links
         └── c -> b (Symbolic link, now non-dangling)
     ```
 
+### ASIDE: `mv` vs `cp` in efficiency
 
-
-### Secondary Storage
-
-
-Flash drives wear out.
-
-"4 TB drive 200TBW" means it has 4TB capacity and you are guaranteed that you can overwrite the same block of memory with 200TB worth of data. After that, that part of the drive wears out.
-
-Linux solves this problem by moving the file around. The user thinks they're writing to the same area, but the OS is actually writing to different parts of the drive.
-
-The implication is that if you remove the file, there are actually parts of the file still scattered around the drive. Attempting a clean wipe of the drive is more involved, and there is also software dedicated to recovering deleted date from these data remnants.
-
----
-
-**ASIDE:** Overwriting the content of a file with random junk:
+You can use the `mv` command to rename and/or move a file.
 
 ```shell
-shred foo
+mv foo.c bar.c # renameing the file
+mv foo.c /bar # if bar is a directory, it becomes /bar/foo.c
+cp foo.c /bar
 ```
 
-
-## The `mv` Command
-
-
-You can use the "move" command to rename and/or move a file.
-
-```shell
-mv foo.c bar.c
-mov foo.c bar  # if bar's a directory, it becomes bar/foo.c
-```
-
-This is a very *cheap* operation because it actually just modifies the mapping of the directory instead of the files themselves. What this does at the low level is:
+This is a very ***cheap*** operation because it actually just modifies the mapping of the directory instead of the files themselves. What this does at the low level is:
 
 * Remove one directory entry
-* Add another entry in a directory, possibly the same one or another directory
+* Add another entry into a directory, possibly the same one or another directory
 
-`cp` on the other hand is more expensive because it has to actually iterate over the content of the file. Although, we [learn later that that might not always be the case with the **copy-on-write** technique](Backups.md).
+`cp` on the other hand is more ***expensive*** because it has to actually iterate over the content of the file.
 
 
 ## File Permissions
@@ -428,8 +406,49 @@ Consider r, w, x permissions separately. For each of then, there are 4 ways to g
 Total: $4^3=64$ (I don't think it is correct huh, you need ot reconsider it)
 
 
-## So How Do You *Actually* Update a File?
+## Secondary Storage
 
+Secondary storage refers to any data storage device that is not the primary storage or RAM of a computer system.<br>
+Unlike primary storage, which is volatile and loses its content when the computer is powered off, secondary storage is non-volatile, meaning it retains data even when the computer is turned off.
+
+Common types of secondary storage include: **HDD(Hard Disk Drive), SSD(Solid-State Drive), USB, CD, Magnetic Tape**, which are used for storing data long-term, backing up data, and transferring data between computers.
+
+### Drives vs Wear Out(擦除)
+
+Traditional HDDs use magnetic coatings(磁性涂层) on spinning disks, which are moving parts. <br>
+Flash drives like SSDs, use flash memory, which is electronic and has no moving parts, for data storage. <br>
+However, flash memory can only endure a limited number of write and erase cycles before the memory cells(存储单元) wear out and then become unreliable.
+
+### Total Bytes Written(TBW)
+
+"4 TB drive 200TBW" <br>
+**4TB capacity**: The total amount of data the drive can store. <br>
+**200TBW**: The total amount of data that can be written to the drive over its lifetime. <br>
+In this case, it means you can write 200 terabytes of data to the drive before the memory cells begin to wear out significantly.
+
+### Linux and Wear Leveling(均匀损耗)
+Linux, like other modern operating systems, employs techniques such as wear leveling to extend the lifespan of flash storage. <br>
+Wear leveling is a process that aims to distribute write and erase cycles evenly(均衡分配) across the memory cells to prevent any single particular part of the drive from wearing out prematurely(过早损耗).
+<!-- 损耗均衡 是一个旨在将写入和擦除周期 均匀地分布 在内存单元上的过程，以防止驱动器的任何单个部分过早磨损 --> 
+
+### Data Deletion and Recovery
+Due to the process of Wearing Leveling, when a file is deleted, the OS typically removes the file's entry from the file system table(current directory), marking the space as available for new data. However, the actual data remains on the drive until it is overwritten.
+
+**Why OS doesn't directly erase the space by overwritting the new data?**
+
+If the kernel were to erase the data immediately upon deletion, it would interfere with the wear leveling process, leading to uneven wear and potentially reducing the lifespan of the storage device.
+
+---
+
+**ASIDE:** Overwriting the content of a file with random junk:
+
+```shell
+shred foo
+```
+`shred` overwrites the file specified as its argument several times. By default, it does this 3 times, but this can be adjusted with the -n option. Each overwrite pass uses different random data, making it difficult to reconstruct the file's original data.
+
+
+## So How Do You *Actually* Update a File?
 
 Options:
 
