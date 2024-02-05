@@ -6,9 +6,9 @@
 
 `#!/bin/bash` at the beginning of a **.sh file** tells the OS to use the Bash shell to interpret and execute the commands contained in the script file.
 
-> **Q: What's the main difference between 'shell' and 'bash'?**
+> **What's the main difference between 'shell' and 'bash'?**
 >
-> **A:** "shell" is a command-line interpreter that provides a user interface for accessing an OS's services, whereas "Bash" is a specific implementation of a shell, offering extended features and functionalities beyond those found in the traditional Bourne shell.
+> "shell" is a command-line interpreter that provides a user interface for accessing an OS's services, whereas "Bash" is a specific implementation of a shell, offering extended features and functionalities beyond those found in the traditional Bourne shell.
 
 ## Comparison Operators
 
@@ -44,22 +44,48 @@
 ## Overall Structure
 
 ### 1. Conditional Statements (if, else, elif, fi)
-Condition Evaluations
-> `[ "$a" \> "$b" ]` **Test Command** with escaped syntax <br>
-> `[[ "$a" > "$b" ]]` **Extended Test Command** without escaped syntax
 
-* `[]` (Test Command) <br>
-* `[[]]` (Extended Test Command) <br>
+* **Condition Evaluations**
+
+    `[ "$a" \> "$b" ]` **Test Command** with escaped syntax <br>
+    `[[ "$a" > "$b" ]]` **Extended Test Command** without escaped syntax
     * `==` `&&` `||` `=~`
 
-```bash
-# Check if a file exists
-if [ -e "myfile.txt" ]; then
-  	echo "myfile.txt exists."
-else
+    ```bash
+    # Check if a file exists
+    if [ -e "myfile.txt" ]; then
+    echo "myfile.txt exists."
+    else
     echo "myfile.txt does not exist."
-fi
-```
+    fi
+    ```
+
+* **Usage of `$?`**
+
+    `$?` is a special built-in variable, which holds the **exit status** of the last command executed in the shell. The exit status, also known as an exit code, is a numerical value returned by a command to the shell upon its completion.
+
+    **`0` Success**: If a command executes successfully without errors, it typically returns an exit status of 0.
+
+    **`Non-zero` Failure**: If a command fails due to any reason (such as a syntax error, a command not found, or an operational error), it returns a non-zero value, which usually indicates the type or category of error. 
+
+
+    ```bash
+    grep "example" somefile.txt
+
+    if [ $? -eq 0 ]; then
+      echo "The word 'example' was found."
+    else
+      echo "The word 'example' was not found."
+    fi
+    ```
+
+    > `grep` searches for the word "example" in the file somefile.txt
+    >
+    > if-statement first checks the **exit value** of `$?`
+    >
+    > if `$?` returns `0`, indicating `grep` successfully found the word, then it will prints a message saying the word was found.
+    >
+    > if `$?` is not 0, indicating `grep` did not find the word or the file does not exist, it prints a message saying the word was not found.
 
 
 ### 2. Loop Structures (for, while, until)
@@ -67,7 +93,7 @@ fi
     ```bash
     # Print numbers from 1 to 5
     for i in {1..5}; do
-        echo “Number $i”
+      echo “Number $i”
     done
     ```
 * While-loop
@@ -75,8 +101,8 @@ fi
     # Repeat while a condition is true
     count = 1
     while [ $count -le 5 ]; do
-        echo “Count: $count”
-        count = $((count + 1))
+      echo “Count: $count”
+      count = $((count + 1))
     done
     ```
 
@@ -88,7 +114,7 @@ fi
 ```bash
 # function declaration and definition
 great() {
-	echo “Hello, $1!”
+  echo “Hello, $1!”
 }
 
 # function calling

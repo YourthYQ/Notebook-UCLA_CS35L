@@ -1,6 +1,6 @@
 # Shell
 
-`shell` refers to a **command-line interpreter** that provides a user interface for accessing an operating system's services.
+`shell` refers to a **command-line interpreter** (like a program) that provides a user interface for accessing an operating system's services.
 
 In Unix and Linux, shells are the primary way for users to interact with the system via commands and scripts.
 
@@ -44,11 +44,12 @@ sh and Emacs are applications in themselves, one of many **applications** that s
 
 ### Access and Trace a PID
 
-**View Processes**: `ps` reports a snapshot(简况) of current processes. To see all running processes, use `ps -e`.
+**View Processes**: `ps` reports a snapshot(简况) of current processes. <br>
+To see all running processes, use `ps -e`. <br>
+To display with a full-format listing (includes UID PID PPID(Parent PID)), use `ps -f` <br>
+To display the process hierarchy like a tree-like format, use `ps -H` <br>
 
 **Find a Process by Name**: `pgrep` finds the PID of a process by name. For example, `pgrep nginx` finds the PID(s) of nginx processes.
-
-**Trace Process Execution**: `strace` trace system calls made by a process. For example, `strace -p PID` traces the system calls of the process with the given PID.
 
 **Kill a Process**: `kill PID` terminates a process. If the process does not terminate, `kill -9 PID` forces termination.
 
@@ -69,11 +70,11 @@ sudo sh
 
 > **Use only the `ps` command to find your own login shell’s process, all that process’s ancestors, and all its descendants.**
 >
->1. Find Shell's Process ID**: First, we need to find the PID of current shell session, using the command of `echo $$` or `ps $$`.
+> **1. Find Shell's Process ID**: First, we need to find the PID of current shell session, using the command of `echo $$` or `ps $$`.
 >
-> 2. Get Ancestors**: To get all ancestors of the shell process, we need to trace the parent process IDs (PPIDs) recursively until we reach the initial process (PID 1). We can do this by repeatedly using ps to find the PPID of each process, starting with the shell's PID. (Or scroll the screen to find)
+> **2. Get Ancestors**: To get all ancestors of the shell process, we need to trace the parent process IDs (PPIDs) recursively until we reach the initial process (PID 1). We can do this by repeatedly using `ps -f PID#` to find the PPID of each process, starting with the shell's PID. (Or scroll the screen to find)
 >
-> 3. Get Descendants**: We need to list all processes, let the PID of this process be the PPID of its descendant, and recursively until we reach the numerically largest PID.
+> **3. Get Descendants**: We need to list all processes, let the PID of this process be the PPID of its descendant, and recursively until we reach the numerically largest PID.
 
 
 ## The `(ba)sh` Program
@@ -116,7 +117,7 @@ The `truncate` command sets a certain file to a certain size, ending at the size
 truncate --size=10TB bigfile
 ```
 
-If you inspect the filesystem, you'll find that you didn't actually use up that much space, just convince the directory listings that that much space had been allocated for *something*. This is still annoying though because it will trip up the sysadmins when they perform **backups**.
+If you inspect the filesystem, you'll find that you didn't actually use up that much space, just convince the directory listings that much space had been allocated for *something*. This is still annoying though because it will trip up the sysadmins when they perform **backups**.
 
 
 ## Baisc Commands in Shell
@@ -126,26 +127,27 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
 
 * `$ man command_name` - Display the manual pages (for a comprehensive understanding) (including all options, nuances, and examples)
 
-* `$ info command_name` - 
+* `$ info command_name` - Similar to `$ man` above, whereas it is particularly useful for **GNU tools and programs**
 
 ### 1. Navigating and Manipulating the File System
 * `~` - Home directory
 
 * `$ cd` - Changes the current directory
-    * `$ cd ..` - moves one directory up the hierarchy
+    * `$ cd ..` - moves one directory up in the hierarchy
 
 * `^D` - Exit the current shell session
 
-* `$ pwd` - Print the current working directory path
+* `$ pwd` - Print the current working directory path (absolute path)
 
 * `$ ls` - List **files** and **directories** in the current directory
     * `-a` (show all files, including hidden)
     * `-l` (show files in long listing format) (more details)
     * `-i` (display the inode number of each file)
-    * `-d` (show directories themselves) (only list their names without listing their contents)
-    * `-r` (reverse order)
-    * `-t` (sort by modification time)
+    * `-d` (show the current directory) (only display directory name without listing the contents)
+    * `-t` (sort by modification time) (the newest(lastest modified) files appear at the top of the list)
     * `-h` (show human-readable sizes)
+    * `-r` (reverse order)
+    * `-R` (recursively list) (list the content inside all directories and their subdirectories)
 
 * `$ mv` - Move files or directories from current location to another **OR** Rename a file (cheap)
     * `$ mv file1 file2... PATH` (Moving)
@@ -165,35 +167,62 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
 ### 2. Working with File Contents
 * `$ cat file_name` - Display the content of a file
 
-* `$ cat file1 >> file2` - Append the content of file1 to file2
+* `$ cat file1 >> file2` - **Append** the content of file1 to file2
 
-* `$ cat file1 file2 > file3` - Concatenate file1 and file2, storing the result into file3
+* `$ cat file1 file2 > file3` - Concatenate file1 and file2, storing the result into file3 (if file 3 already exists, then **overwrite** it with new contents)
+
+* `$ diff file1 file2` - Compare files line by line, and output their difference in the "normal" format
+    * `$ diff -u file1 file2` (use the **unified format** for its output) 
+        > ```$ diff -u file1.txt file2.txt >result.diff``` <br>
+        >  compares the difference between two file in unified format and as a stdout redirect to a diff file
 
 ### 3. Searching Files
 
-* `$ grep` - Search for patterns within files
-    * `-E` (enable the use of **extended Regular Expressions**)
+* `$ grep [option] PATTERN file_name` - Search for patterns within files
+    * `-E '^[regular expression]$'` (enable the use of **extended Regular Expressions**) (Regex starts with `^`, and ends with `$`)
+    * `-v` (give the complement of search) (displays all lines that **NOT** contain the specified pattern)
+        > ```$ grep -v 'banana' example.txt```<br>
+        > filters out the line containing "banana", and display every other lines
     * `-r` (recursively read all files under all directories and their sub-directories)
     * `-i` (ignore case) (make the search case-insensitive)
 
-* `$ find PATH` - Search for files in a directory hierarchy
+* `$ find PATH [option1] [option2] [...]` - Search for files or directories in a directory hierarchy
     * `-type f` (search only for files)
     * `-type d` (search only for directories)
-    * `-inum inode#` (search for inode #)
-    * `-print` (print the PATH of the file)
+
+    <br>
+
+    * `-inum inode#` (search by inode #)
     * `-name file_name` (search for files by name)
         * `-iname` (case-insensitively search for files by name)
+
+    <br>
+
+    * `-mtime number` - Find files in the current directory via **last modification time** in *days* (modified **`number` days ago**)
+        * `-mmin number` - Find files in the current directory via **last modification time** in *minutes*
+        * `find PATH -mtime -7` (find files accessed less than 7 days ago)
+        * `find PATH -mtime +7` (find files accessed more than 7 days ago)
+
+    * `-atime number` - Find files in the current directory via **last access time** in *days*
+        * `-amin number` - Find files in the current directory via **last access time** in *minutes*
+
+    * `-ctime number` - Find files based on the time their **metadata(or inode information)** was changed in *days*
+        * `-cmin number` - Find files based on the time their **metadata(or inode information)** was changed in *minutes*
+
+    <br>
+
     * `-size` (search for files by size)
-        * `-size +50M` (search for files over 50 MB)
         * `-size -10K` (search for files under 10 KB)
+        * `-size +50M` (search for files over 50 MB)
     * `-exec command_name` (execute a command on the files found)
-    * `-maxdepth / -mindepth number` (limit the search to a specific depth of directories)
+    * `-maxdepth / -mindepth number` (limit the search to a specific depth in a directory hierarchy)
     * `-delete` (delete the files found (use with caution))
+    * `-print` (print all outputs the `find` found) (this is a default behavior of `find`, so you don't need to tpye out while using)
 
     <br>
 
     ```shell
-    grep -E '^[^e]+$' /usr/share/dict/linux.words | wc -l
+    $ grep -E '^[^e]+$' /usr/share/dict/linux.words | wc -l
     ```
     > This command searches through the file /usr/share/dict/linux.words, which typically contains a list of English words, to find and count all lines (words) that do not contain the letter 'e'.
 
@@ -206,14 +235,14 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     > * `[^e]+` matches one or more characters (+) that are not (^ when used inside []) the letter 'e'
     > * `$` asserts the end of a line
     >
-    > `|` pass the output of the previous command as input to the next command
+    > `|` pipe(pass) the output of the previous command as input to the next command
     >
     > `wc -l` stands for **word count**, and the `-l` option tells it to count lines
 
     <br>
 
     ```shell
-    find . -name "*.txt" -mtime -7 -exec cat {} \;
+    $ find . -name "*.txt" -mtime -7 -exec cat {} \;
     ```
     > This command searches for and displays the contents of all .txt files in the current directory and its subdirectories that were modified in the last 7 days.
     
@@ -221,7 +250,7 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     >
     > `.` specifies the starting PATH for the search, which is the current directory (denoted by .)
     >
-    > `-name "*.txt"` tells `find` to match files whose names end with .txt.
+    > `-name "*.txt"` tells `find` to match all files whose names end with `.txt`.
     >
     > `-mtime -7`
     > * `mtime` is the **modification time** of the files
@@ -230,17 +259,26 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     > `-exec cat {} \;`
     >
     > * `-exec command_name` tells `find` to execute a command on each file found
-    > * `cat` displays the contents of files
-    > * `{}` a placeholder for the file name found by `find`
-    > * `\;` marks the end of the command to be executed
+    > * `cat` displays the contents of files (should be used with `{}`)
+    > * `{}` a placeholder for the file name found by `find` (should be used with `cat`)
+    > * `\;` marks the end of the command to be executed (where `\` is the **escape character**, which can also be achieved by `''` or `""` like `';'` or `";"`)
+
+    <br>
+
+    > **What's the main difference between `ls` and `find`?**
+    > 
+    > `ls` lists the files only in the **current directory** by default (unless with the recursive option `-R`)
+    >
+    > `find` searches for files in a **directory hierarchy** (which includes all direcotries and their subdirectories)
+
 
 ### 4. File Compression and Archiving
 * `$ tar`
     * `-c` (create a new archive)
     * `-z` (**compress or decompress** the archive using 'gzip')
-    * `-v` (list the files processed) (v stands for Verbose mode)
     * `-f` (specify the filename of the archive)
     * `-x` (extract files from an archive)
+    * `-v` (list the files processed) (v stands for Verbose mode)
 
 * `$ tar -czf tgz_file_name file1 file2...` - Create a compressed archive named `tgz_file_name` using gzip and put `file1 file2...` into it
 
@@ -254,22 +292,46 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     ```
 
 ### 5. Miscellaneous Commands (some others)
+* `wget2 [option] [URL]` - Download content from a **URL**
+    * `-0 file_name` (specify the output filename where the downloaded content stored)
+        > ```wget2 -O index.html [URL]``` <br>
+        > downloads the content from [URL] and stores it to a file called index.html
 * `$ tree` - Display the directory structure in a tree-like format
 
-* `$ seq` - Generate a sequence of numbers
+* `$ seq` - Generate a sequence of numbers (sequence)
     * `$ seq 5` (generate numbers from 1 to 5)
     * `$ seq 2 10` (generate numbers from 2 to 10)
     * `$ seq 0 2 10` (generate numbers from 0 to 10, increment by 2)
 
-* `$ shuf` - Generate random permutations of input lines
+* `$ shuf` - Generate random permutations of input lines (shuffle)
     * `-e arg1 arg2...` `--echo` (treat each command-line argument as an input line, and output with a random permutation)
-    * `-n number` `--head-count` (display any n random lines from the file)
+    * `-n number` `--head-count` (display any n random lines **from the input line or file**)
     * `-i LO-HI` `--input-range` (output a random permutation of the numbers from LO to HI)
     * `-r` `--repeat`
+        
+        
+        > ```$ shuf -n 2 -e apple banana cherry```
+        >
+        > ```$ shuf -i 1-100 -n 5```
+        >
+        > ```$ shuf -r -n 5 -e apple banana cherry```
 
 * `$ which command_name` - Show the full path of the command's executable (find where it is located)
 
-* `$ chmod + file_name` - Give executable permission to a file (allowing it to be run as a script)
+* `$ chmod [who][+/-][permission flag] file_name` - Give permission for **ugo** to a file (allowing it to be **rwxst**) (change mode(permission))
+    * `who` (ugo): user, group, others
+    * `permission flag` (rwxst): read, write, execute, setuid/setgid, sticky(restrict deletion)
+        
+
+        > ```$ chmod u+s g+rw o-x file_name```
+        >
+        > `u+s` add s(setuid) permission for the user
+        > 
+        > `g+rw` add r(read) and w(write) permission for the group
+        >
+        > `o-x` remove x(execute) permission for others 
+
+    p.s. check `Filesystem.md` to get more information about `chmod` and `permission flag`
 
 * `$ ln source_file link_name` - Create hard links between files
     * `-s` (use -s if you want to create a symlink)
@@ -277,6 +339,7 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
 * `$ ps` - displays only the processes running in the current shell (associated with the terminal session currently using)
     * `-e` (display every process running around the whole system)
     * `-f` (a full-format listing) (includes UID PID PPID)
+        * `ps -f PID#` (show information of a particular process via its PID#)
     * `-H` (displays the process hierarchy like a tree-like format)
 
 * `$ kill PID#` - terminate a process
@@ -309,8 +372,8 @@ ls ~/Desktop
 
 
 ## Field Splitting
-Field splitting is the process where the shell splits the results of expansions (like parameter expansion, arithmetic expansion, and command substitution) into words. 
-
+Field splitting is the process where the shell splits the results of expansions (like parameter expansion, arithmetic expansion, and command substitution) into words. <br>
+Field Spliiting is similar to str.split() in Python.
 * This process is guided by the value of the IFS (Internal Field Separator) variable (内部字段分隔符)
 * IFS determines the characters used as word delimiters (分隔符) during field splitting. (IFS决定字段分割时用作单词分隔符的字符)
 * Its default value includes space, tab, and newline, which means that by default, words are separated by these characters
@@ -366,32 +429,37 @@ Key Wildcards in Globbing:
 
 
 ## Redirection
-Redirection in the shell allows us to control where the input and output of commands go. You can redirect the output of a command to a file, or use a file as the input for a command.
+**Redirection** in the shell allows us to control where the input and output of commands go. You can redirect the output of a command to a file, or use a file as the input for a command.
+
+**File Descriptors** inlcudes `0`(stdin), `1`(stdout), `2`(stderr), which are small, system-allocated integers used by the shell to handle inputs and outputs of commands.
 
 Common Redirection Operators:
 
 * `0<` or `<` Redirects standard input from a file
     ```bash
     grep "Hello" < hello.txt  
-    # Uses hello.txt as input for grep
+    # Uses hello.txt as input for the `grep` command
     # uses the ‘grep’ to search for the string "Hello" in the file hello.txt
     ```
 
 * `1>` or `>` Redirects standard output to a file (overwrites the file)
     ```bash
-    echo "Hello, World!" > hello.txt  
+    echo "Hello, World!" > hello.txt
+    # Uses the output generated by the command `echo` as the input to hello.txt
     # Writes to hello.txt (overwrites)
     ```
 
 * `2>` Redirects standard error to a file
     ```bash
     ls non_existing_dir 2> error.log
+    # Uses the error message generated by the command `ls` as the input to error.log
     # Redirects error message to error.log
     ```
 
 * `&>` Redirects both standard output and standard error to a file
     ```bash
-    ls good_dir &> output.log         
+    ls good_dir &> output.log        
+    # Uses both the error message and output generated by the command `ls` as the input to error.log
     # Redirects both output and error to output.log
     ```
 
@@ -399,4 +467,21 @@ Common Redirection Operators:
     ```bash
     echo "Welcome" >> hello.txt
     # Appends to hello.txt
+    ```
+
+* `i>&j` Redirects (file descriptor) i to wherever (file descriptor) j is currently directed <br>
+    ```bash
+    $ command > file.log 2>&1
+    
+    # `command > file.log` redirects the stdout(file descriptor 1) to file.log (use the ouput generated by the `command` as the input to file.log)
+    # `2>&1` redirects the stderr to wherever the stdout is currently directed, where's the `file.log` in this case
+
+    # This line redirects both stdout and stderr of `command` to `file.log` (where the stdout is directed)
+    ```
+
+* `i>&-` Closes (file descriptor) i, discard what i does<br>
+(effectively discarding command standrad output or error)
+    ```bash
+    $ command 2>&-
+    # This line runs `command` while discarding any error messages it generates.
     ```
