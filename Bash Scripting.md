@@ -2,13 +2,13 @@
 
 `Bash` (Bourne Again Shell) is a specific type of shell. It was created as an improved replacement for the original Bourne shell(sh), which includes rich feature set like command line editing, job control, shell functions, etc.
 
-`.sh file` refers to **Bash script file** or **Shell executable file**
+`.sh file` refers to **Bash scripting file** or **Shell executable file**
 
 `#!/bin/bash` at the beginning of a **.sh file** tells the OS to use the Bash shell to interpret and execute the commands contained in the script file.
 
 > **What's the main difference between 'shell' and 'bash'?**
 >
-> "shell" is a command-line interpreter that provides a user interface for accessing an OS's services, whereas "Bash" is a specific implementation of a shell, offering extended features and functionalities beyond those found in the traditional Bourne shell.
+> "shell" is a command-line interpreter(a program) that provides a user interface for accessing an OS's services, whereas "Bash" is a specific **implementation** of a shell, offering extended features and functionalities beyond those found in the traditional Bourne shell.
 
 ## Comparison Operators
 
@@ -22,7 +22,7 @@
 
 ### 2. String Comparison Operators
 * `=` Equal to
-* `==` Equal to (same as `=`)
+* `==` Equal to (same as `=`) (only for [[]])
 * `!=` Not equal to
 * `<` Less than, in ASCII alphabetical order
     * Used as `[[ "$a" < "$b" ]]` or in a **test command** with escaped syntax: `[ "$a" \< "$b" ]`
@@ -43,26 +43,34 @@
 
 ## Overall Structure
 
+p.s. `$variable_name` is used to access the value stored in a variable named variable_name
+```shell
+greeting="Hello, World!"
+echo $greeting # print "Hello, World!"
+```
+
 ### 1. Conditional Statements (if, else, elif, fi)
 
 * **Condition Evaluations**
 
-    `[ "$a" \> "$b" ]` **Test Command** with escaped syntax <br>
+    `[ "$a" \> "$b" ]` **Test Command** (sometime should use with escaped syntax when encounters **special characters**) <br>
     `[[ "$a" > "$b" ]]` **Extended Test Command** without escaped syntax
-    * `==` `&&` `||` `=~`
+    * Extended Test Command implements more operators like `==` `&&` `||` `=~` and allows `>` `<` `>=` `>=` without escaping
 
     ```bash
     # Check if a file exists
     if [ -e "myfile.txt" ]; then
-    echo "myfile.txt exists."
+      echo "myfile.txt exists."
     else
-    echo "myfile.txt does not exist."
+      echo "myfile.txt does not exist."
     fi
     ```
 
+    p.s. `[]` is POSIX compliant, `[[]]` is a Bash extension
+
 * **Usage of `$?`**
 
-    `$?` is a special built-in variable, which holds the **exit status** of the last command executed in the shell. The exit status, also known as an exit code, is a numerical value returned by a command to the shell upon its completion.
+    `$?` is a special built-in variable, which holds the **exit status**(zero or non-zero) of the last command executed in the shell. The exit status, also known as an exit code, is a numerical value returned by a command to the shell upon its completion.
 
     **`0` Success**: If a command executes successfully without errors, it typically returns an exit status of 0.
 
@@ -85,7 +93,7 @@
     >
     > if `$?` returns `0`, indicating `grep` successfully found the word, then it will prints a message saying the word was found.
     >
-    > if `$?` is not 0, indicating `grep` did not find the word or the file does not exist, it prints a message saying the word was not found.
+    > if `$?` is `not 0`, indicating `grep` did not find the word or the file does not exist, it prints a message saying the word was not found.
 
 
 ### 2. Loop Structures (for, while, until)
@@ -102,23 +110,23 @@
     count = 1
     while [ $count -le 5 ]; do
       echo “Count: $count”
-      count = $((count + 1))
+      count = $((count + 1)) # $((...)) is used for arithmetic expansion (we will see it later)
     done
     ```
 
 ### 3. Functions
-* In shell scripting, we don’t specify parameters inside parentheses while declaring, parameters are passed to the function when it is called instead.
+* In shell scripting, we **don’t specify parameters inside parentheses** while declaring, parameters are passed to the function when it is called instead.
 * While calling the function great() below, we use ”$1” to get the parameters (“$1, $2, $3…” is positional parameters similar in Python). This “1” refers to the first argument passed to the function.
 * “$0” is a special case: it refers to the name of the script itself, not a function parameter
 
 ```bash
 # function declaration and definition
 great() {
-  echo “Hello, $1!”
+  echo “Hello, $1! Your UCLA_ID is $2.”
 }
 
 # function calling
-great “Alice”
+great “Alice” 123456789
 ```
 
 
@@ -146,13 +154,14 @@ echo "${greeting}world"
 Command substitution, denoted by `$(command)`, allows you to use the output of a command as an argument of another command
 
 ```bash
-files=$(ls)
-echo "Files in the directory: $files"
+today=$(date)
+echo "The current date and time are: $today"
+# `date` is a command outputs the current date and time
 ```
 
 ```bash
 echo "The current directory is: $(basename $(pwd))"
-# pwd returns the current directory path, basename extracts the last part of that path (the current directory name), and echo prints it out.
+# `pwd` returns the current directory path, `basename` extracts the last part of that path (the current directory name), and echo prints it out.
 ```
 
 
@@ -173,6 +182,11 @@ echo "Sum: $sum"  # Outputs: Sum: 15
 product=$((a * b))
 echo "Product: $product"  # Outputs: Product: 50
 ```
+
+> **What's the difference between `$(...)` and `$((...))`?**
+>
+> `$(command)` is used for command substitution <br> 
+> `$((expression))` is used for performing arthemetic
 
 
 ## Special Characters & Quoting Mechanisms
@@ -217,9 +231,21 @@ Some techniques to deal with **Special Characters**: `\`, `''`, `""`
     ```
     Here, $HOME is not expanded to the user's home directory, as it is enclosed in single quotes.
 
-3. Double Quotes `""` - Partial Quoting
+3. Double Quotes `""` - Partial Quoting <br>
+Double Quotes allow for **Variable Expansion, Command Substitution, Arithmetic Expansion and Escape Sequence Processing**, whereas Backslash and Single Quotes do not.
     ```bash
-    echo "Your home directory is $HOME"  
+    echo "Your home directory is $HOME"  # Variable Expression
     # Outputs: Your home directory is /home/username
+
+    echo "Current path is $(pwd)"  # Command Substitution
+    # Outputs: Current path is /home/username/desktop
+
+    echo "2 + 3 is $((2+3))"  # Arithmetic Expansion
+    # Outputs: 2 + 3 is 5
+
+    echo "Line 1\nLine 2" # Escape Sequence Processing
+    # Output:
+    # Line1
+    # Line2
     ```
     In this example, `$HOME` is expanded to the user's home directory, it will return the **Absolute Path** of HOME.

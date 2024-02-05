@@ -176,7 +176,25 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
         > ```$ diff -u file1.txt file2.txt >result.diff``` <br>
         >  compares the difference between two file in unified format and as a stdout redirect to a diff file
 
-### 3. Searching Files
+### 3. Output Manipulation
+Commands below often work with `ls`, `grep`, `find`, and **pipe `|`**, which takes the output of previous command, and pipe it as the input to the latter command.
+
+* `$ wc` - word counts
+    * `-c` (count bytes)
+    * `-m` (count characters) 
+    * `-l` (count lines)
+    * `-w` (count words)
+
+* `head -n number` - Output only the first `number` lines of the input text
+
+* `tail -n number`: Output only the last `number` lines of the input text
+
+    ```shell
+    $ ls -lt /path/to/directory | head -n 10
+    ```
+    > This command lists the top 10 most recently modified files or directories in /path/to/directory, sorted by modification time (the newest first)
+
+### 4. Searching Files
 
 * `$ grep [option] PATTERN file_name` - Search for patterns within files
     * `-E '^[regular expression]$'` (enable the use of **extended Regular Expressions**) (Regex starts with `^`, and ends with `$`)
@@ -271,8 +289,7 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     >
     > `find` searches for files in a **directory hierarchy** (which includes all direcotries and their subdirectories)
 
-
-### 4. File Compression and Archiving
+### 5. File Compression and Archiving
 * `$ tar`
     * `-c` (create a new archive)
     * `-z` (**compress or decompress** the archive using 'gzip')
@@ -291,7 +308,7 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
     # these three commands do the same thing
     ```
 
-### 5. Miscellaneous Commands (some others)
+### 6. Miscellaneous Commands (some others)
 * `wget2 [option] [URL]` - Download content from a **URL**
     * `-0 file_name` (specify the output filename where the downloaded content stored)
         > ```wget2 -O index.html [URL]``` <br>
