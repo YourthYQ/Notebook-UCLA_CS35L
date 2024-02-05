@@ -17,9 +17,9 @@ Run the file by `M-x` `function_name` in Emacs (while interactive enables)
 ## Basics Grammar
 ```lisp
 (message "Hello, world!")   ; print("Hello, world!")
-(setq i 0)                  ; i = 0 (assign 0 to i)
-(+ 2 3)                     ; addition: 2 + 3
-(= 2 3)                     ; whether equal to: 2 == 3
+(setq i 0)                  ; i = 0 (assign value)
+(+ 2 3)                     ; 2 + 3 (addition)
+(= 2 3)                     ; 2 == 3 (whether equal to)
 ```
 
 
@@ -27,7 +27,7 @@ Run the file by `M-x` `function_name` in Emacs (while interactive enables)
 Emacs uses the same notation for programs and data. In other words, we use **data notation** to write our programs. The fundamental data structure in Lisp is the **list**, which is built from **cons**, which is just a pair of values. A list is singly-linked list of cons.
 
 ```txt
-# This is a cons
+# This is a cons(pair)
 [A|B]
 (A . B)
 
@@ -56,9 +56,12 @@ In Emacs, the *empty list* is like the *null pointer* - its byte representation 
 
 
 ## Emacs Byte-code
+When Elisp code is compiled, the code is translated into a set of byte-code instructions (aks **Emacs Byte-code**) that are understood by the Emacs Lisp virtual machine. <br>
+This byte-code is not as fast as native **machine code**, but it's significantly faster to execute than interpreting the Elisp source code directly.
+
 You can load external source code into the current namespace with:
 
-```
+```console
 M-x load-file RET filename RET
 ```
 
@@ -66,18 +69,18 @@ As a solution to slow interpreting speed (due to the extensive use of pointers a
 
 Byte-code differs from machine code:
 
-* **PRO:** byte-code is *portable* and works on any architecture as it is designed for some abstract machine that the Emacs application knows about.
-* **CON:** Not as performant as machine code.
+* **PRO:** byte-code is *portable*(可移植的) and works on any architecture as it is designed for some abstract machine that the Emacs application knows about.
+* **CON:** not as performant or fast as machine code.
 
 From the GNU documentation:
 
 > Emacs Lisp has a compiler that translates functions written in Lisp into a special representation called byte-code that can be executed more efficiently. The compiler replaces Lisp function definitions with byte-code. When a byte-code function is called, its definition is evaluated by the byte-code interpreter.
 
-The numbers are analogous to opcodes in true machine code. Each number represents a certain elementary operation, like pushing data onto stack memory, adding two values, etc.
+The numbers are analogous to opcodes(operating codes) in true machine code. Each number represents a certain elementary operation, like pushing data onto stack memory, adding two values, etc.
 
 For example, abstractly, this may be the compiled byte-code for some function:
 
-```
+```console
   1 push a (arg #1)
  10 dup
  27 *
@@ -90,7 +93,7 @@ For example, abstractly, this may be the compiled byte-code for some function:
 
 Strung together they are functionally equivalent to the original Emacs function from which it was compiled, but now it can be compactly represented with a byte stream `1 10 27 2 10 27 26 105`.
 
-This in turn is more performant than uncompiled Emacs code because it can be run directly by a byte-code interpreter, in contrast to high-level language that needs to be parsed (tokenized and semantically analyzed) before executing - going off of some scattered knowledge here, anyone feel free to correct me.
+This in turn is <u>**more performant than uncompiled Emacs code because it can be run directly by a byte-code interpreter**, **in contrast to high-level language that needs to be parsed (tokenized and semantically analyzed) before executing**</u> - going off of some scattered knowledge here, anyone feel free to correct me.
 
 The byte-code files end with the `.elc` extension. You can compile a `.el` *source* file with:
 
@@ -107,7 +110,7 @@ M-x byte-compile-file RET filename.elc RET
 
 
 ### Number
-eLisp does not have a fixed limit on the size of integers, which means it can be worked with very large numbers without overflow.
+eLisp does not have a fixed limit on the size of integers, which means it can be worked with very large numbers **without overflow**.
 
 ### String
 Escape Sequences: <br>
@@ -121,13 +124,18 @@ Escape Sequences: <br>
 ```(setq myString "This is a backslash: \\")```
 
 ### Symbol
+
 ### Pair (Cons)
+Remember each **cons** or **pair** requires two arguments. <br>
+You can use **cons** to create a **list** with the `nil` as an ending. (check back the part of "Fundamental Data Structures" above)
 ```lisp
-(cons 12 “abc”) 		; output: (12 . “abc”)
+(cons 12 “abc”)     ; output: (12 . “abc”)
 ```
 ```lisp
-(cons -3 (cons 12 nil)) ; output: (-3 12)
-(cons -3 (cons 12)) ; error
+(cons -3 (cons 12 nil))     ; output: (-3 12)
+; with a nil, a list is created but NOT a cons.
+
+(cons -3 (cons 12))         ; error
 ; 'cons' function requires two arguments, but the second call to cons is only provided with one
 ```
 ### Eval (Evalution)
@@ -158,7 +166,7 @@ Escape Sequences: <br>
 
 ```lisp
 (eval (+ 1 2))  		; return: 3
-(eval ‘(+ 1 2))			; return: 3
+(eval `(+ 1 2))			; return: 3
 ```
 
 ```lisp
@@ -225,7 +233,7 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
     ```
 
     ```lisp
-    (dolist (element '(1 2 3 4 5))
+    (dolist (element `(1 2 3 4 5))
       (message "Element: %d" element))
     ```
 
@@ -269,29 +277,29 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
 * Function Definition Template
     ```lisp
     (defun function-name (parameter1 parameter2 ...)
-        "Optional documentation string."
-        (interactive)
-        ;; Function body
+      "Optional documentation string."
+      (interactive)
+      ;; Function body
     )
     ```
 * Example 1 - Regular Function without `interactive`
     ```lisp
     (defun is-even (n)
-  		(= (% n 2) 0)
-        ; (if (= (% n 2) 0) t nil)
+  	  (= (% n 2) 0)
+      ; (if (= (% n 2) 0) t nil)
     )
     ```
 * Example 2 - `interactive` Function
     ```lisp
     (defun is-even (n)
-        "Check if N is an even number."
-        (interactive "nEnter a number: ")  
-        ; n to Prompts the user to enter a number
-        ; s to Prompts the user to enter a string
-        (if (equal (% n 2) 0)
-            (message "%d is even" n)
-            (message "%d is odd" n)
-        )
+      "Check if N is an even number."
+      (interactive "nEnter a number: ")  
+      ; d to Prompts the user to enter a number
+      ; s to Prompts the user to enter a string
+      (if (equal (% n 2) 0)
+        (message "%d is even" n)
+        (message "%d is odd" n)
+      )
     )
     ```
 
@@ -323,25 +331,25 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
     ```
 * List manipulation
     ```lisp
-    (list (+ 1 2) ‘(+ 1 2)) ; Returns (3 (+ 1 2))
+    (list (+ 1 2) `(+ 1 2)) ; Returns (3 (+ 1 2))
 
-    (car '(a b c))
+    (car `(a b c))
     ; Returns the first element of the list.
 
-    (cdr '(a b c)) 
+    (cdr `(a b c)) 
     ; Returns the rest of the list (b c).
 
-    (cdddr '(1 2 3 4 5)) ; Returns (4 5)
+    (cdddr `(1 2 3 4 5)) ; Returns (4 5)
     ; ‘cdddr’ is a function that gets the third cdr of a list. It's equivalent to calling cdr three times in succession.
 
-    (cadddr ‘(1 2 3 4 5)) ; Returns 4
+    (cadddr `(1 2 3 4 5)) ; Returns 4
     ; ‘cadddr’, a represents the head char, d stands for delete
 
     ; !!! E R R O R !!!
-    (car ‘((1 2 3) (4 5 6))) & (car ‘(1 2 3) ‘(4 5 6))
+    (car `((1 2 3) (4 5 6))) & (car `(1 2 3) `(4 5 6))
     ; car only can process one list
 
-    (append '(a b) '(c d)) ; Concatenates two lists to form (a b c d).
+    (append `(a b) `(c d)) ; Concatenates two lists to form (a b c d).
     ```
 * Math Functions
     ```lisp
@@ -356,8 +364,8 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
     ```lisp
     (setq x 10) 
     ; ‘setq’ is used to set the value of a variable (x) to 10.
-    (quote (1 2 3)) & (‘(1 2 3))
+    (quote (1 2 3)) & (`(1 2 3))
     ; This results in the list (1 2 3) without attempting to evaluate it. It's often abbreviated as '(1 2 3).
-    (reverse '(1 2 3)) # Returns (3 2 1)
+    (reverse `(1 2 3)) # Returns (3 2 1)
     ; The single quote (') in (reverse '(1 2 3)) in eLisp is used to prevent the list (1 2 3) from being evaluated.
     ```

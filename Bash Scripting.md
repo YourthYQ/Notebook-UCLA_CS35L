@@ -2,6 +2,8 @@
 
 `Bash` (Bourne Again Shell) is a specific type of shell. It was created as an improved replacement for the original Bourne shell(sh), which includes rich feature set like command line editing, job control, shell functions, etc.
 
+`#` is the comment notation in Bash scripting
+
 `.sh file` refers to **Bash scripting file** or **Shell executable file**
 
 `#!/bin/bash` at the beginning of a **.sh file** tells the OS to use the Bash shell to interpret and execute the commands contained in the script file.

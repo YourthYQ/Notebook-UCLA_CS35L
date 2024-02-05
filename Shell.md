@@ -295,9 +295,12 @@ Commands below often work with `ls`, `grep`, `find`, and **pipe `|`**, which tak
     * `-z` (**compress or decompress** the archive using 'gzip')
     * `-f` (specify the filename of the archive)
     * `-x` (extract files from an archive)
-    * `-v` (list the files processed) (v stands for Verbose mode)
+    * `-t` (list all contents of an archive)
+    * `-v` (Show details about the operation(`tar` and its options) being performed) (v stands for Verbose mode)
 
 * `$ tar -czf tgz_file_name file1 file2...` - Create a compressed archive named `tgz_file_name` using gzip and put `file1 file2...` into it
+
+* `$ tar -tvf tgz_file_name` - Give a verbose listing of the files contained in the archive named tgz_file_name by showing detailed information about each file without actually extracting them
 
 * `$ tar -xzf tgz_file_name` - Extract files from a compressed archive using gzip
 
