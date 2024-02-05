@@ -162,7 +162,35 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
 
 * `$ mkdir directory_name` - Create a new directory
 
+<br>
+
 * `$ touch file_name` - Create a new file if it does not exist **OR** Updates the timestamp of an existing file
+
+* `$ make target_name` - Used to build and compile a software program. It reads a file named `Makefile`, which the `target_name` points to, contains a set of directives(not code itself) about how to compile and link the program(code).
+    * `MakeFile` is the file pointed by `target` containing instructions for `make` on how to build the target program.
+
+    > **Consider a directory containing only 'Makefile’ and 'prog.c'. The Makefile contains a target 'prog' that compiles 'prog.c' to 'prog'.** <br>
+    > **We run the following sequence of shell commands:**
+    >
+    > ```$ make prog``` <br>
+    > ```$ touch prog.c``` <br>
+    > ```$ touch prog``` <br>
+    > ```$ make prog``` <br>
+    >
+    > **How many times is 'prog.c' compiled?**
+    >
+    > Once. <br>
+    > `make` checks if the modification time of 'prog' newer than 'prog.c' to determine whether the file needs compilation. <br>
+    > `touch` updates the timestamps in a way such that 'prog' is newer than 'prog.c'.
+
+    > `prog.c` is the **C Source Code File** where the programmer writes the code. <br>
+    > `prog` is the **Executable File** generated from compiling prog.c. It is also a <u>**target**</u> for `make` in this case. <br>
+    > The **Executable File** contains machine code that the computer can execute directly to perform the tasks defined in the source code. <br>
+
+    > `$ make prog` compiles 'prog.c' into the executable 'prog'. At this point, 'prog.c' has been compiled once. <br>
+    > `$ touch prog.c` updates the modification time of 'prog.c' to the current time, making it newer than the previously compiled 'prog' executable. <br>
+    > `$ touch prog` updates the modification time of the 'prog' executable to the current time, making it newer than 'prog.c' again. <br>
+    > `$ make prog` Since 'prog' already exists, `make` checks its timestamps first. Since 'prog' was `touch`ed after 'prog.c', making its modification time newer than that of 'prog.c', `make` might normally decide that 'prog' does not need to be recompiled because the <u>**target(prog)**</u> is newer than its dependency(prog.c).
 
 ### 2. Working with File Contents
 * `$ cat file_name` - Display the content of a file
@@ -316,12 +344,32 @@ Commands below often work with `ls`, `grep`, `find`, and **pipe `|`**, which tak
     * `-0 file_name` (specify the output filename where the downloaded content stored)
         > ```wget2 -O index.html [URL]``` <br>
         > downloads the content from [URL] and stores it to a file called index.html
+
 * `$ tree` - Display the directory structure in a tree-like format
 
 * `$ seq` - Generate a sequence of numbers (sequence)
     * `$ seq 5` (generate numbers from 1 to 5)
     * `$ seq 2 10` (generate numbers from 2 to 10)
     * `$ seq 0 2 10` (generate numbers from 0 to 10, increment by 2)
+
+* `$ which command_name` - Show the full path of the command's executable (find where it is located)
+
+* `$ ln source_file link_name` - Create hard links between files
+    * `-s` (use -s if you want to create a symlink)
+
+* `$ shred file_name` - overwrite a file to erase its contents (wear out the actual data on the drive)
+
+<br>
+
+* `$ ps` - displays only the processes running in the current shell (associated with the terminal session currently using)
+    * `-e` (display every process running around the whole system)
+    * `-f` (a full-format listing) (includes UID PID PPID)
+        * `ps -f PID#` (show information of a particular process via its PID#)
+    * `-H` (displays the process hierarchy like a tree-like format)
+
+* `$ kill PID#` - terminate a process
+
+<br>
 
 * `$ shuf` - Generate random permutations of input lines (shuffle)
     * `-e arg1 arg2...` `--echo` (treat each command-line argument as an input line, and output with a random permutation)
@@ -336,35 +384,16 @@ Commands below often work with `ls`, `grep`, `find`, and **pipe `|`**, which tak
         >
         > ```$ shuf -r -n 5 -e apple banana cherry```
 
-* `$ which command_name` - Show the full path of the command's executable (find where it is located)
+<br>
 
-* `$ chmod [who][+/-][permission flag] file_name` - Give permission for **ugo** to a file (allowing it to be **rwxst**) (change mode(permission))
-    * `who` (ugo): user, group, others
-    * `permission flag` (rwxst): read, write, execute, setuid/setgid, sticky(restrict deletion)
+* `$ chmod` - change mode(permission)
+    * `$ chmod [who][+/-][permission flag] file_name` - Give permission for **ugo** to a file (allowing it to be **rwxst**)
+        * `who` (ugo): user, group, others
+        * `permission flag` (rwxst): read, write, execute, setuid/setgid, sticky(restrict deletion)
+
+    * `$ chmod [permission number] file_name` - The **Permission Number** consists of *three digits*, representing *ugo* respectively; The **Size** of each number represents their own *permission*.
         
-
-        > ```$ chmod u+s g+rw o-x file_name```
-        >
-        > `u+s` add s(setuid) permission for the user
-        > 
-        > `g+rw` add r(read) and w(write) permission for the group
-        >
-        > `o-x` remove x(execute) permission for others 
-
     p.s. check `Filesystem.md` to get more information about `chmod` and `permission flag`
-
-* `$ ln source_file link_name` - Create hard links between files
-    * `-s` (use -s if you want to create a symlink)
-
-* `$ ps` - displays only the processes running in the current shell (associated with the terminal session currently using)
-    * `-e` (display every process running around the whole system)
-    * `-f` (a full-format listing) (includes UID PID PPID)
-        * `ps -f PID#` (show information of a particular process via its PID#)
-    * `-H` (displays the process hierarchy like a tree-like format)
-
-* `$ kill PID#` - terminate a process
-
-* `$ shred file_name` - overwrite a file to erase its contents (wear out the actual data on the drive)
 
 ## File Expansion
 
@@ -424,6 +453,7 @@ Pathname expansion allows you to use wildcard (通配符) characters to match fi
 Key Wildcards in Globbing:
 
 * `*` - matching any string of characters
+
     ```bash
     ls *.txt  
     # Lists all files ending with .txt in the current directory

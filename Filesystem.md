@@ -60,7 +60,7 @@ $ ls -lai
 
 # -rw-r--r--: Permission flags, first '-' means it is a regular file
 
-# 2: Link count. '2' means the file has 2 hard links pointing to it
+# 2: Hard link counts. '2' means the file has 2 hard links pointing to it
 
 # yourth: User name
 
@@ -68,7 +68,7 @@ $ ls -lai
 
 # 4096: Size of the file in bytes
 
-# Jan 1 12:34: Last modification time
+# Jan 1 12:34: Timestamp (last modification time)
 
 # example.txt: File name
 ```
@@ -369,6 +369,51 @@ $ ls -lai
 
 **IMPORTANT**: Special Permissions' flags `s` or `t` instead of x indicates that the execute bit `x` is defaultly on. 
 
+### Modify the Permission using `chmod`
+You can change the permission by command `chmod`, which stands for 'changing mode'(aks changing permission).
+
+1. Using `chmod` Symbolically
+* `$ chmod [who][+/-][permission flag] file_name` - Give permission for **ugo** to a file (allowing it to be **rwxst**) (change mode(permission))
+
+    * `who` (ugo): user, group, others
+    * `permission flag` (rwxst): read, write, execute, setuid/setgid, sticky(restrict deletion)
+        
+
+    > ```$ chmod u+s g+rw o-x file_name```
+    >
+    > `u+s` add s(setuid) permission for the user
+    > 
+    > `g+rw` add r(read) and w(write) permission for the group
+    >
+    > `o-x` remove x(execute) permission for others 
+
+<br>
+
+2. Using `chmod` Numerically (with an octal value)
+* `$ chmod [permission number] file_name` - The **Permission Number** consists of *three digits*, representing *ugo* respectively; The **Size** of each number represents their own *permission*.
+
+    * `0` - no permission
+    * <u>**`1` - execute permission**</u>
+    * <u>**`2` - write permission**</u>
+    * `3` - write and execute permissions (2+1)
+    * <u>**`4` - read permission**</u>
+    * `5` - read and execute permissions (4+1)
+    * `6` - read and write permissions (4+2)
+    * `7` - read, write, and execute permissions (4+2+1)
+
+    p.s. You can observe that every additions of permission number are based on `4` `2` `1`
+
+
+    > ```$ chmod 754 file_name```
+    >
+    > 7 - User(Owner) is permitted to read (4), write (2), and execute (1).
+    > 
+    > 5 - Group is permitted to read (4) and execute (1).
+    > 
+    > 4 - Others are permitted to read (4) only.
+
+<br>
+
 ```shell
 $ chmod +s /bin/sh
 chmod: changing permissions of 'bin/sh': Operation not permitted
@@ -434,7 +479,7 @@ Wear leveling is a process that aims to distribute write and erase cycles evenly
 <!-- 损耗均衡 是一个旨在将写入和擦除周期 均匀地分布 在内存单元上的过程，以防止驱动器的任何单个部分过早磨损 --> 
 
 ### Data Deletion and Recovery
-Due to the process of Wearing Leveling, when a file is deleted, the OS typically removes the file's entry from the file system table(current directory), marking the space as available for new data. However, the actual data remains on the drive until it is overwritten.
+Due to the process of Wear Leveling, when a file is deleted, the OS typically removes the file's entry from the file system table(current directory), marking the space as available for new data. However, the actual data remains on the drive until it is overwritten.
 
 > **Why OS doesn't directly erase the space by overwritting the new data?**
 >
