@@ -204,6 +204,44 @@ If you inspect the filesystem, you'll find that you didn't actually use up that 
         > ```$ diff -u file1.txt file2.txt >result.diff``` <br>
         >  compares the difference between two file in unified format and as a stdout redirect to a diff file
 
+* `$ sed [option] 'PATTERN'` (Stream Editor) - Modify files automatically or extracting data based on patterns. Combine with **REGEX**(regular expression) is helpful.
+
+    Specific Operations in 'PATTERN': <br>
+    `s` - substitute <br>
+    `d` - delete <br>
+    `p` - print <br>
+
+    `-n` - Suppress automatic printing of pattern, used with `-p` to print specific patterns <br>
+        `sed` processes each line of input, applies all the specified commands to it, and then prints the pattern by default. `-n` changes this behavior so that it does not automatically print each line after processing. Instead, lines will only be printed if explicitly instructed to do so, typically using the `p`.
+
+    ```shell
+    $ sed 's/hello/world/' file.txt
+    # `s` specifies substitution
+    # Replace "hello" with "world" in a file
+
+    $ sed '/^$/d' file.txt
+    # Delete all empty lines from a file
+    # `^$` matches start and end of the line with nothing between them
+    # `g` deletes all lines match with pattern
+    
+    $ sed -n '/pattern/p' file.txt
+    # Only lines matching pattern are printed to stdout. All other lines are suppressed and not shown.
+    # `-n` with `p` prints lines matching "pattern"
+    $ sed '/pattern/' file.txt
+    # Every line of the input file is printed to stdout. This command behaves similar to ($ sed '/pattern/' file.txt) because there's no Specific Operation in the PATTERN
+
+    $ sed '/pattern/a\New line here' file.txt
+    # Append a line after matching "pattern"
+    # `a\` stands for append
+
+    $ sed '/pattern/i\New line before' file.txt
+    # Insert a line before matching "pattern"
+    # `i\` stands for insert
+
+    $ sed '3,5d' file.txt
+    # Remove lines from 3 to 5
+    ```
+
 ### 3. Output Manipulation
 Commands below often work with `ls`, `grep`, `find`, and **pipe `|`**, which takes the output of previous command, and pipe it as the input to the latter command.
 

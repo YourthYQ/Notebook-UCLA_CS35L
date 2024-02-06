@@ -35,7 +35,7 @@ Traditional programming performance metrics:
 Networking performance metrics:
 
 * **Throughput**(吞吐量): Number of **client requests per second** that the system can handle (assuming individual requests and responses are reasonably small and approximately equally sized); bigger is better.
-* **Latency**(等待时间): Delay between a request to the server and the response back from the server; smaller is better.
+* **Latency**(延迟): Delay between a request to the server and the response back from the server; smaller is better.
 
 To improve **throughput**:
 

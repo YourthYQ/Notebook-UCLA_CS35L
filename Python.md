@@ -63,11 +63,16 @@ Prevalent in machine learning, although this feat is probably due to being at th
 
 Oh yeah and here's a quote I found pretty *profound*:
 
-> There's always going to be a time where you're the blind person next to the elephant. The goal of software construction is to make you a better blind person. **- Dr. Eggert**
+> **"There's always going to be a time where you're the blind person next to the elephant. The goal of software construction is to make you a better blind person."** - Dr. Eggert
+>
+> The analogy to—being a "blind person next to the elephant" is a variation on the well-known parable of the blind men and the elephant. In this story, several blind men touch different parts of an elephant to learn what it is like. Each one feels a different part, such as the side, the tusk, or the trunk, and then they compare their views. Because they each felt only one part, their descriptions of the elephant are completely different from one another. This story is often used to illustrate the point that people can have widely differing perceptions of the same object or concept, depending on their limited experience and perspective.
+> 
+> In the context of software development, this analogy highlights how developers might understand only a part of the overall system or problem they're working on, especially in complex or large-scale projects. Each developer might be familiar with just a segment of the application or a slice of the technology stack, akin to the blind men understanding only the part of the elephant they could touch.
+>
+>The statement "The goal of software construction is to make you a better blind person" suggests that while it may be unrealistic to expect any one person to comprehend the entirety of a complex system (to "see" the whole elephant), the aim should be to improve developers' ability to understand, interact with, and make decisions about their piece of the system as effectively as possible.
 
 
 ## Python Internals
-
 
 Python is **object-oriented**. Historically, it didn't actually start out that way. It started with functions but no classes. When classes were introduced, they implemented *methods* as functions that explicitly take the `self` first argument, which is actually how OOP is implemented behind the hood in languages like C++.
 

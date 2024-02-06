@@ -2,6 +2,8 @@
 Elisp is the scripting language that powers Emacs, which is used to write extensions and customize Emacs. It is also a dialect (方言) of the Lisp programming language.
 
 `;` - comment notation in eLisp <br>
+`nil` - represents the boolean value `false`, the empty list `()`, and the end of a list. Can only be compared via `eq` and `equal`, but not `=`.
+
 * Scratch <br>
 Open 'Scratch' to code with eLisp <br>
 `C-x b` `RET` `*scratch*` <br>
@@ -139,6 +141,9 @@ You can use **cons** to create a **list** with the `nil` as an ending. (check ba
 ; 'cons' function requires two arguments, but the second call to cons is only provided with one
 ```
 ### Eval (Evalution)
+Evaluation follows a specific set of rules that dictate **how expressions(code) are interpreted and executed** by the Lisp environment <br>
+Elisp allows programmer to <u>**prevent evaluation**</u> by using two prefixes: **Single Quote(`'`)** or **Backtick(``` ` ```)**.
+
 ```lisp
 (setq l `(a b c))		; result: set l = (a b c)
 (setq l (a b c))		; error
@@ -154,14 +159,15 @@ You can use **cons** to create a **list** with the `nil` as an ending. (check ba
 
 ```lisp
 (cons 3 l)				; result: (3 a b c)
-; since `(a b c) is not been evaluated, then l is not a list, but three arguments
+; since `(a b c) is not been evaluated, then it is stored as a list in l
+; the result is (3 a b c), a list, but not (3 . (a b c)), a cons, since l is a list
 (cons 3 `l)             ; result: (3 . l)
 ; since `l is not been evaluated, then `l is only a letter l
 ```
 
 ```lisp
 (setq x `(cons 3 l))	; result: x = (cons 3 l)
-(setq y (cons 3 l))		; result: y = (3 . (a b c))
+(setq y (cons 3 l))		; result: y = (3 a b c)
 ```
 
 ```lisp
@@ -247,7 +253,7 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
     ```
 
     ```lisp
-    (dotimes (i 5)
+    (dotimes (i 5) ; similars to (i = 0; i < 5; i++)
       (message "Iteration: %d" i))
     ; output: 0 1 2 3 4
     ```
@@ -294,8 +300,9 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
     (defun is-even (n)
       "Check if N is an even number."
       (interactive "nEnter a number: ")  
-      ; d to Prompts the user to enter a number
+      ; n to Prompts the user to enter a number
       ; s to Prompts the user to enter a string
+
       (if (equal (% n 2) 0)
         (message "%d is even" n)
         (message "%d is odd" n)
@@ -327,17 +334,18 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
 * String Manipulation
     ```lisp
     (concat "Hello, " "world!") ; Concatenates strings.
-    (substring "Hello, world!" 0 5) ; Extracts a substring.
+    (substring "Hello, world!" 0 5) ; Extracts a substring [0,5). Output: "Hello"
     ```
 * List manipulation
     ```lisp
     (list (+ 1 2) `(+ 1 2)) ; Returns (3 (+ 1 2))
+    (cons 1 (cons 2 nil)) ; Returns (1 2), which is a list
 
-    (car `(a b c))
+    (car `(a b c)) ; Returns: a
     ; Returns the first element of the list.
 
-    (cdr `(a b c)) 
-    ; Returns the rest of the list (b c).
+    (cdr `(a b c)) ; Returns (b c)
+    ; One `d` means to return the rest of the list after first element.
 
     (cdddr `(1 2 3 4 5)) ; Returns (4 5)
     ; ‘cdddr’ is a function that gets the third cdr of a list. It's equivalent to calling cdr three times in succession.
@@ -360,6 +368,34 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
     ```
 * Comparison
 
+    `=` - Numerical Comparison <br>
+    Numerical Comparison is **ONLY** used to compare numerical numbers. It **CANNOT** be used to compare non-numeric values such as *`list` or `nil`*
+
+    `equal` - Content Comparison
+
+    `eq` - Identity Comparison
+
+    p.s. When the `equal` and `eq` are used as Numerical Comparison, they check both operands and values.
+
+    ```lisp
+    (= 3 3.0) ; t (stands for `true`)
+
+    (setq a (cons 3 19))
+    (setq b (cons 3 19))
+    (equal a b) ; t
+
+    (eq a b) ; nil (stands for `false`)
+
+    (= `(a b c) nil) ; !!ERROR!! (wrong-type argument)
+    (equal `() nil) ; t
+    (eq `() nil) ; t
+
+    (equal 3 3.0) ; nil (since 3 is integer, and 3.0 is floating-point number)
+    (equal 3 3) ; t
+    (eq 3 3.0) ; nil (since 3 is integer, and 3.0 is floating-point number)
+    (eq 3 3) ; t
+    ```
+
 * Some others
     ```lisp
     (setq x 10) 
@@ -372,7 +408,7 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
 
 <br>
 
-> **Compare the usage of Single Quote(') and Backtick(\`) in eLisp** <br>
+> **Compare the usage of Single Quote(`'`) and Backtick(``` ` ```) in eLisp** <br>
 > While both the Backtick and the Single Quote **prevent evaluation**, the *Backtick* provides additional flexibility by allowing certain parts of the expression **to be evaluated**.
 > 
 > Single Quote <br>
