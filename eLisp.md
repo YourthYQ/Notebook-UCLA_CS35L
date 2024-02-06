@@ -369,3 +369,17 @@ In eLisp, the typical for-loop as seen in many other languages is implemented us
     (reverse `(1 2 3)) # Returns (3 2 1)
     ; The single quote (') in (reverse '(1 2 3)) in eLisp is used to prevent the list (1 2 3) from being evaluated.
     ```
+
+<br>
+
+> **Compare the usage of Single Quote(') and Backtick(\`) in eLisp** <br>
+> While both the Backtick and the Single Quote **prevent evaluation**, the *Backtick* provides additional flexibility by allowing certain parts of the expression **to be evaluated**.
+> 
+> Single Quote <br>
+> ```'(+ 1 (+ 1 2)``` <br>
+> ```; Output: (+ 1 (+ 1 2))```
+> 
+> Backtick <br>
+> The backtick(\`) is used for backquoting, which allows portions of the quoted expression **to be evaluated** by prefixing them with a comma(`,`) <br>
+> ``` `(+ 1 ,(+ 1 2))``` <br>
+> ```; Output: (+ 1 3)```
