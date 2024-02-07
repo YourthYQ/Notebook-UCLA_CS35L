@@ -42,7 +42,7 @@ To improve **throughput**:
 * ➕ You can perform actions "out of order" (compared to "request order").
 * ➕ You can perform actions(also multiple servers) *in parallel*.
     * Front-end is parallel with Back-end server
-* ➖ This can cause out-of-order execution, which can "mis-order" transactions.
+* ➖ This can cause out-of-order execution, which can "mis-order" transactions. i.e. (serialization problems)
 
 To improve **latency**:
 

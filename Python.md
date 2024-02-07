@@ -123,8 +123,141 @@ The main *categories* of types in modern Python:
 There's also the **buffer** type. I assume this is only available in Python 2. Buffers are like multiple strings. When you're done working with it, you can convert it to a string with `str(x)`.
 
 
-## Lists
+## Strings
+`str.strip()`
 
+1. Default Behavior (No Arguments): 
+    When strip() is used without any arguments, it removes all leading and trailing whitespace characters (like spaces, tabs, newlines) from the string.
+    
+2. Specifying Characters: 
+    You can also specify a string of characters to be stripped. strip() will then remove all combinations of those characters from both the start and the end of the string.
+    ```python
+    s = '   spacious    '
+    # strip(No_Argument) removes all leading and trailing whitespace characters (like spaces, tabs, newlines)
+    print(s.strip()) # Output: "spacious"
+    ```
+    ```python
+    s = 'aaahh   panic    aahhh'
+    # strip(Argument) remove all combinations of those characters from both the start and the end of the string
+    print(s.strip('ah')) # Output: "   panic    "
+    # remove all combinations of 'a' & 'h'
+    print(s.strip('ah ')) # Output: "panic"
+    # remove all combinations of 'a', 'h', ' '
+    ```
+
+`str.rstrip()`
+
+1. This method is used to remove trailing characters (characters at the end of a string). <br>
+
+2. By default, it removes any whitespace characters, such as space, newline (\n), or tab (\t). However, you can specify a string of characters to be removed.
+    ```python
+    text = "  This is a sentence with whitespace at the end.     \n"
+    cleaned_text = text.strip()
+    print(repr(cleaned_text))
+
+    cleaned_text = text.rstrip()
+    # "This is a sentence with whitespace at the end."
+    print(repr(cleaned_text))
+    # "  This is a sentence with whitespace at the end."
+    ```
+    ```python
+    text = "....This is a sentence with a period at the end...."
+    cleaned_text = text.strip('.')
+    print(repr(cleaned_text))
+    # "This is a sentence with a period at the end"
+
+    cleaned_text = text.rstrip('.')
+    print(repr(cleaned_text))
+    # "....This is a sentence with a period at the end"
+    ```
+
+`str.join()`
+
+```python
+L = ["ba", "na", "na"]
+print("".join(L)) # banana
+print(" ".join(L)) # ba na na
+print("---".join(L)) # ba---na---na
+```
+
+`str.split()`
+
+1. Default Use (No Arguments): 
+    When used without arguments, split() will treat consecutive whitespace as a single separator, splitting the string at each occurrence of whitespace.
+
+2. Specifying a Separator: 
+    You can specify a string as the separator. The method will split the string at each occurrence of this separator.
+    
+3. Using maxsplit: 
+    If the maxsplit parameter is provided, the method will split the string at most maxsplit times, with the remainder of the string being returned as the last element of the list.
+
+```python
+text = "hello world welcome to Python"
+print(text.split()) 
+# ['hello', 'world', 'welcome', 'to', 'Python']
+# use whitespace as separator, splitting the string at each occurrence of whitespace
+
+text = "apple,banana,cherry"
+print(text.split(',')) 
+# ['apple', 'banana', 'cherry']
+# use ',' as separator, splitting the string at each occurrence of comma
+
+text = "one:two:three:four"
+print(text.split(':', 2)) 
+# ['one', 'two', 'three:four']
+# use ':' as separator, splitting the string at most 2 times
+```
+
+`str.splitlines()`
+This method splits a string into a list where each element is a line from the string. It splits the string at line breaks (\r, \n, \r\n). This is useful when you have a string that contains multiple lines and you want to work with each line separately.
+
+```python
+text = "First line.\nSecond line.\rThird line.\r\nFourth line."
+lines = text.splitlines()
+print(lines)
+# ['First line.', 'Second line.', 'Third line.', 'Fourth line.']
+```
+
+`str.replace()`
+
+1. Basic Usage: 
+    The method returns a new string where all occurrences of the old substring are replaced with the new substring.
+
+2. Lmiting the Number of Replacements: 
+    By using the count parameter, you can limit the number of replacements.
+
+    ```python
+    text = "I like apples. Apples are great!"
+    print(text.replace("apples", "oranges"))  
+    # Output: "I like oranges. Oranges are great!"
+
+    text = "I like apples. Apples are great! Apples are healthy!"
+    print(text.replace("apples", "oranges", 1))
+    # Output: "I like oranges. Apples are great! Apples are healthy!"
+    ```
+
+## Dictionary
+```python
+d = {1: "a", 2: "b", 3: "c"}
+print(d[1])
+
+print(d.get(1)) # error-free (will not pop error if this key not exist)
+print(d.get(4))  # Outputs: # default output is 'None'
+print(d.get(4, 'Not Found'))  # Outputs: 'Not Found'
+
+d.setdefault(4, 'default')  # Adds key 4 with value 'default' if key 4 is not in the dictionary
+print(d)
+
+d_copy = d.copy()
+d.update() # changes nothing
+d.update({2: "c", 5: "d"})
+
+key, value = d.popitem() # Popping an item and print
+
+print(d.clear()) # None
+```
+
+## Lists
 
 <!-- I originally didn't have this section because I now know it by heart, but for completeness sake: -->
 
@@ -144,6 +277,25 @@ Common operations universal to sequential containers:
 * `my_list[i:j]`: return a `slice` of the container, starting from index `i` and up until but excluding `j`.
   * Mutable ones also support this syntax on the LHS, where it means **reassigning** a segment of the container, as well as `del my_list[i:j]`, which deletes that segment of the container.
 
+
+### Anonymous functions & Lambda
+You can define a function without a name if the function definition is a one-liner. 
+This character will be executed by lambda.
+```python
+# function_name = lambda return_value : function_definition
+double = lambda x : 2 * x 
+# def double(x):
+#     return 2*x
+print(double(3)) # Output: 6
+
+multiply = lambda x, y: x * y
+print(multiply(2, 3)) # Output: 6
+```
+
+Anonymous function is useful when passed as a function argument.
+L = [3, 1, 23, 4, 6, 100]
+L.sort(key=lambda x: x % 2) # [1, 1, 1, 0, 0, 0] 
+print(L)
 
 ### ASIDE: Underying `list` Allocation
 
@@ -295,6 +447,111 @@ Packages are oriented towards developers (like a *compile-time notion*). The tre
 
 Classes are about runtime behavior (a *runtime notion*). You want inheritance to be independent of package hierarchy. Classes are only concerned with their own behavior, "what to do next", so it should be able to pull code from anywhere in the codebase. How developers *organize* that codebase is made possible with packages.
 
+
+## Argparse
+The **argparse module** makes it easy to write user-friendly command-line interfaces and allows the programmer to define what arguments are required, and Python will figure out how to parse those out of sys.argv. <br>
+The argparse module also automatically generates help and usage messages and issues errors when users give the program invalid arguments.
+
+* How argparse works <br>
+When you create a parser, you tell it what arguments to expect. Each argument can trigger different actions, and you can specify the type of data you expect (like integers, strings, etc.). When the script is run, argparse processes the arguments user provided on the command line, converts them to the specified type, and then your script can use them.
+
+```python
+import argparse
+
+# Create the parser
+parser = argparse.ArgumentParser(description='Example script')
+
+# Add arguments
+parser.add_argument('name', help='Your name')
+parser.add_argument('--age', type=int, help='Your age')
+
+# Parse the arguments
+args = parser.parse_args()
+‘‘‘
+# parse_args(): This method of the ArgumentParser instance parser is responsible for interpreting the arguments passed to the script when it's run from the command line. It reads the arguments from sys.argv (the list of command-line arguments passed to a Python script), parses them, and returns an object (typically named args) containing the arguments and their values.
+’’’
+
+# Use the arguments
+print(f"Hello {args.name}, you are {args.age} years old.")
+```
+
+<br>
+
+> Use Emacs to write a script shuf.py. Your script should implement the GNU `shuf` command that is part of GNU Coreutils. GNU `shuf` is written in C, whereas you want a Python implementation so that you can more easily add new features to it.
+> 
+> Your program should support the following `shuf` options, with the same behavior as GNU shuf: **--echo (-e), --input-range (-i), --head-count (-n), --repeat (-r), and --help**. As with GNU shuf, if --repeat (-r) is used without --head-count (-n), your program should run forever.
+>
+> Your program should also support *zero non-option arguments* or *a single non-option argument “-” (either of which means read from standard input)*, or *a single non-option argument other than “-” (which specifies the input file name)*. As with GNU `shuf`, your program should report an error if given invalid arguments.
+
+```python
+#!/usr/local/cs/bin/python3
+import argparse
+import random
+import sys
+
+def generate_input(args):
+    if args.echo is not None:
+        return args.echo
+    elif args.input_range:
+        start, end = map(int, args.input_range.split('-'))
+        return [str(i) for i in range(start, end + 1)]
+    elif args.file == '-':
+        return [line.strip() for line in sys.stdin]
+    else:
+        with open(args.file, 'r') as f:
+            return [line.rstrip('\n') for line in f]
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate random permutations of input lines")
+    parser.add_argument('-e', '--echo', nargs='*', help="Treat each ARG as an input line")
+    parser.add_argument('-i', '--input-range', help="Treat each number LO through HI as an input line")
+    parser.add_argument('-n', '--head-count', type=int, help="Output at most COUNT lines")
+    parser.add_argument('-r', '--repeat', action='store_true', help="Repeat output values")
+    parser.add_argument('file', nargs='?', default='-', help="Input file or '-' for standard input")
+
+    args = parser.parse_args()
+
+    # Validate head count
+    if args.head_count is not None and args.head_count < 0:
+        parser.error("invalid head count: cannot be negative")
+
+    # Validate input range format
+    if args.input_range:
+        try:
+            start, end = map(int, args.input_range.split('-'))
+            if start > end:
+                parser.error("invalid input range: start should not be greater than end")
+        except ValueError:
+            parser.error("invalid input range format: expected format is 'start-end'")
+
+    lines = generate_input(args)
+
+    if args.head_count is not None:
+        lines = lines[:(int(args.head_count))]
+
+    random.shuffle(lines)
+
+    if args.repeat and not args.head_count:
+        while True:
+            print(random.choice(lines))
+    else:
+        for line in lines:
+            print(line)
+
+if __name__ == "__main__":
+    main()
+```
+
+> `update()`
+> 
+> In Python, strings are immutable, which means they cannot be changed after they are created. Therefore, there is no update() method for strings. Any operation that modifies a string will actually create a new string, rather than changing the original one.
+> 
+> As for lists, there is no update() method for lists either. The update() method is actually a method for dictionaries, not lists. For lists, you typically use methods like append(), extend(), or insert() to add items, and remove(), pop(), or slicing to remove items.
+```python
+my_dict = {'a': 1, 'b': 2}
+my_dict.update({'b': 3, 'c': 4})  # Updates 'b' and adds 'c'
+# my_dict would be {'a': 1, 'b': 3, 'c': 4}.
+```
 
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/x-mathjax-config">

@@ -187,3 +187,34 @@ M-: (funcall function &rest arguments)      this call function with specific arg
 ## Regular expressions(regex)
 
 Regex are used for matching patterns within strings, and they can vary slightly in syntax and capabilities across different programming languages and tools.
+
+```
+Special Characters:
+.               any single char except newline  a.c   abc
+\               escape a special char    \.\*\+\?\$\^/\\  .*+?$^/\
+^               start of string or start of line   ^abc.*   abcksfafkjas
+$               end of string or end of line   askf$   ~askf
++               1 or more occurrence     file\w\w+  file9aaaa
+*               0 or more times
+?               0 or 1 time
+]               this is special when it ends a char alternative [ … ]
+-               this is special when it is inside of a char alternative [a-z]
+
+Character Classes:
+[ … ]           one of the chars in the brackets  [aeiou]   a or e or i …
+[x-y]           one of the chars in the range from x to y [a-z]   letter a-z
+[^x]            one char that is not x
+[^x-y]          one char that is not in the range  [^a-z]   A ? ./ 
+[:ascii:]       POSIX class of all ascii chars
+[:alpha:]       POSIX class of all alphabetical chars
+[:digit:]       POSIX class of all numerical chars
+
+p1\|p2          any match for p1 or p2
+\(p\)           only match for p
+[]a-z]          char that is ‘]’ or ‘a’ to ‘z’
+[^]a-z]         char that is not ‘]’ or not ‘a’ to ‘z’
+[a-z[]          char that is ‘a’ to ‘z’ or ‘[‘
+[^^-]           char that is not ‘^’ or  not ‘-‘
+[^^]            char that is not ‘^’
+[^-]            char that is not ‘-‘
+```
