@@ -89,6 +89,8 @@ Sold to Department of Defense as a reliable way to communicate in the event of n
 
 Packet switching is a best effort transmission/no guarantees (circuit-switching is a *guarantee* between the two machines).
 
+<img width="743" alt="image" src="https://github.com/YourthYQ/UCLA-CS35L/assets/126733621/fb31daa7-fe68-4c5c-a49d-a5fb0d41086c">
+
 **Problems:**
 
 * Packets can be lost - if some router along the way gets overloaded, some packets may be discarded
@@ -300,3 +302,5 @@ A **declarative** (as opposed to an **imperative**) language. **Markup** specifi
 Extensible bracket types allow you to define new features without making breaking changes to the language. `<QUOTE>` is one type of bracket with its closing tag `</QUOTE>`, `<ITALIC>` is another, etc.
 
 The structure of the document forms a tree structure: the content inside `<ITALICS>` is a child node to `<QUOTE>`.
+
+![Uploading image.png…]()
