@@ -27,77 +27,71 @@ C                    ^     |
 
 Traditional programming performance metrics:
 
-* CPU time: how many CPU instructions executed (roughly proportional to the amount of **energy consumed**)
-* Real time: amount of human time elapsed
-* RAM (Ramdon-Access Memory)
-* I/O (IOStream)
+- CPU time: how many CPU instructions executed (roughly proportional to the amount of **energy consumed**)
+- Real time: amount of human time elapsed
+- RAM (Ramdon-Access Memory)
+- I/O (IOStream)
 
 Networking performance metrics:
 
-* **Throughput**(吞吐量): Number of **client requests per second** that the system can handle (assuming individual requests and responses are reasonably small and approximately equally sized); bigger is better.
-* **Latency**(延迟): Delay between a request to the server and the response back from the server; smaller is better.
+- **Throughput**(吞吐量): Number of **client requests per second** that the system can handle (assuming individual requests and responses are reasonably small and approximately equally sized); bigger is better.
+- **Latency**(延迟): Delay between a request to the server and the response back from the server; smaller is better.
 
 To improve **throughput**:
 
-* ➕ You can perform actions "out of order" (compared to "request order").
-* ➕ You can perform actions(also multiple servers) *in parallel*.
-    * Front-end is parallel with Back-end server
-* ➖ This can cause out-of-order execution, which can "mis-order" transactions. i.e. (serialization problems)
+- ➕ You can perform actions "out of order" (compared to "request order").
+- ➕ You can perform actions(also multiple servers) _in parallel_.
+  - Front-end is parallel with Back-end server
+- ➖ This can cause out-of-order execution, which can "mis-order" transactions. i.e. (serialization problems)
 
 To improve **latency**:
 
-* ➕ You can use **caching** to speed up responses.
-* ➖ This can cause **stale caches**, which requires **cache validation** to fix, which could be an expensive operation.
+- ➕ You can use **caching** to speed up responses.
+- ➖ This can cause **stale caches**, which requires **cache validation** to fix, which could be an expensive operation.
 
 > `Caches` are storage layers that temporarily hold data to reduce the time it takes to access that data in future requests. <br>
-> The primary purpose of caching is to improve efficiency and performance by storing frequently accessed information in memory (or another faster storage medium) so that it can be retrieved more quickly than if it were accessed from its primary storage location, such as a hard disk or a remote server. 
+> The primary purpose of caching is to improve efficiency and performance by storing frequently accessed information in memory (or another faster storage medium) so that it can be retrieved more quickly than if it were accessed from its primary storage location, such as a hard disk or a remote server.
 >
-> `Stale caches` refer to situations where the data stored in a cache is outdated compared to the current new version of the data available in the storage. 
-> 
+> `Stale caches` refer to situations where the data stored in a cache is outdated compared to the current new version of the data available in the storage.
+>
 > `Cache validation` is a caching process to ensure the data served from a cache is still **fresh and matches the latest version** available in the source of truth, like a database or a web server. <br>
-> This process helps in efficiently managing caches by avoiding the unnecessary reloading of resources that haven't changed. 
-
+> This process helps in efficiently managing caches by avoiding the unnecessary reloading of resources that haven't changed.
 
 ## Task Networking Styles
 
 **Circuit Switching**
 
-* System is connected to the nearest central office, which can connect to other central offices. In the end, you get a path between one computer to the others.
-* However, you have temporary ownership of a wire during the transaction.
-    * ➕ once setup, "guaranteed" performance
-    * ➖ waste capacity when conversation is stopped
+- System is connected to the nearest central office, which can connect to other central offices. In the end, you get a path between one computer to the others.
+- However, you have temporary ownership of a wire during the transaction.
+  - ➕ once setup, "guaranteed" performance
+  - ➖ waste capacity when conversation is stopped
 
 **Packet Switching**
 
-* Connected to a little computer that breaks the signal into a bunch of small messages called **packets**(数据包). Each packet is sent to a local **router** that sends the packets along the network to the destination. Each packet travels independently and possible along different paths, and they do so very quickly, so it does not back up the network.
-    * ➕ less waste capacity
-    * ➕ more resilient
+- Connected to a little computer that breaks the signal into a bunch of small messages called **packets**(数据包). Each packet is sent to a local **router** that sends the packets along the network to the destination. Each packet travels independently and possible along different paths, and they do so very quickly, so it does not back up the network.
+  - ➕ less waste capacity
+  - ➕ more resilient
 
 > **Compare the usage bewteen Circuit Switching and Packey Switching**
-> 
-> **Circuit Switching**: Best suited for applications requiring consistent bandwidth(宽带) and low latency, such as traditional voice calls and real-time video conferencing. <br>
-> **Packet Switching**: Ideal for data and internet communications, where the volume of data can be highly variable, and the network's ability to dynamically allocate resources is advantageous.
-> 
+>
+> **Circuit Switching**: Best suited for applications requiring consistent bandwidth(宽带) and low latency, such as traditional voice calls and real-time video conferencing. <br> > **Packet Switching**: Ideal for data and internet communications, where the volume of data can be highly variable, and the network's ability to dynamically allocate resources is advantageous.
+>
 > p.s. **Bandwidth** refers to the **maximum rate at which data can be transmitted** over a network connection or data communication channel, typically measured in bits per second (bps).
 
 ## Packet Switching
 
-
 Idea originally proposed by Paul Baran (1960s, RAND).
 
-Sold to Department of Defense as a reliable way to communicate in the event of nuclear war because of its ability to *reroute* in the event of an office goes down, which gives it an edge over traditional **circuit switching**.
+Sold to Department of Defense as a reliable way to communicate in the event of nuclear war because of its ability to _reroute_ in the event of an office goes down, which gives it an edge over traditional **circuit switching**.
 
-Packet switching is a best effort transmission/no guarantees (circuit-switching is a *guarantee* between the two machines).
-
-<img width="743" alt="image" src="https://github.com/YourthYQ/UCLA-CS35L/assets/126733621/fb31daa7-fe68-4c5c-a49d-a5fb0d41086c">
+Packet switching is a best effort transmission/no guarantees (circuit-switching is a _guarantee_ between the two machines).
 
 **Problems:**
 
-* Packets can be lost - if some router along the way gets overloaded, some packets may be discarded
-* Packets can be received out of order
-* Packets can be duplicated via a mechanism called **bridges**
-* All routing decisions are local to the individual routers, so packets may be directed into a loop
-
+- Packets can be lost - if some router along the way gets overloaded, some packets may be discarded
+- Packets can be received out of order
+- Packets can be duplicated via a mechanism called **bridges**
+- All routing decisions are local to the individual routers, so packets may be directed into a loop
 
 ## Internet Protocol Suite (TCP/IP)
 
@@ -121,13 +115,11 @@ Basic idea: **layering**. Protocols are built on top of each other, with each la
                             Hardware
 ```
 
-
 ## Link Layer
 
 Point-to-point.
 
 The bits and bytes you send on a single link from one node to another (no routers in between). Very hardware oriented. Each technology used has its own link layer protocol.
-
 
 ## Internet Layer
 
@@ -144,56 +136,54 @@ We are running out of IPv4 addresses because there are only about 4 billion, and
 
 A packet is just a sequence of bytes. The **payload** is prefixed by a **header** that stores **metadata** like:
 
-* Length.
-* Protocol number (to support any protocol that ends up being built atop IP) tells you the *type* of packet that's being transported so algorithms can determine their priority. For example, a single video frame is much less important than part of a image file.
-* Source IP address (a 32-bit number expressed in four parts, which ranges from 0 to 255 for each part) [0,256)
-    * e.g. `192.54.239.17`
-* Destination IP address (ibid).
-* A **checksum** (16-bit).
-* **Time-to-Live (TTL)** ensures the data-packet NOT circulate indefinitely on the internet, which could lead to network congestion.
-    * A Time-toLive field (8-bit "hop count" that keeps track of how many routers it goes through;
+- Length.
+- Protocol number (to support any protocol that ends up being built atop IP) tells you the _type_ of packet that's being transported so algorithms can determine their priority. For example, a single video frame is much less important than part of a image file.
+- Source IP address (a 32-bit number expressed in four parts, which ranges from 0 to 255 for each part) [0,256)
+  - e.g. `192.54.239.17`
+- Destination IP address (ibid).
+- A **checksum** (16-bit).
+- **Time-to-Live (TTL)** ensures the data-packet NOT circulate indefinitely on the internet, which could lead to network congestion.
+  - A Time-toLive field (8-bit "hop count" that keeps track of how many routers it goes through;
     packets with abnormally high TTL values get dropped to prevent packet loops).
 
 When routers receive packets, they look at the header, especially the destination address, to determine what to do with it.
 
 ### IPv6
 
-* Created in 1996.
-* 128 bit IP addresses.
-* The headers are also longer.
-* A superset of IPv4; the 32 bits of IPv4 can be mapped to 32 bits of an IPv6 address, so IPv4 users can communicate with IPv6 users. The converse is not as simple but made possible with complicated translation techniques.
-* Less efficient because the extra length is overhead for the link layer
-
+- Created in 1996.
+- 128 bit IP addresses.
+- The headers are also longer.
+- A superset of IPv4; the 32 bits of IPv4 can be mapped to 32 bits of an IPv6 address, so IPv4 users can communicate with IPv6 users. The converse is not as simple but made possible with complicated translation techniques.
+- Less efficient because the extra length is overhead for the link layer
 
 ## Transport Layer
 
-**Data channels.** Large data *streams* (TB of data) that cannot be individual packets. This layer oversees how a *stream of packets* is transmitted.
+**Data channels.** Large data _streams_ (TB of data) that cannot be individual packets. This layer oversees how a _stream of packets_ is transmitted.
 
 ### UDP (User Datagram Protocol)
 
-* Created by David Reed at MIT.
-* Designed as a thin layer over IP, but still at the Internet layer.
-* You use UDP if your application sends single short messages over the Internet without much care if it is lost, duplicated, etc. Intended for apps that *want* to deal with packets.
+- Created by David Reed at MIT.
+- Designed as a thin layer over IP, but still at the Internet layer.
+- You use UDP if your application sends single short messages over the Internet without much care if it is lost, duplicated, etc. Intended for apps that _want_ to deal with packets.
 
 ### TCP (Transmission Control Protocol)
 
 Vint Cerf from Stanford, Bob Kahn from Princeton.
 
-Looks like a *stream of data* that:
+Looks like a _stream of data_ that:
 
-* Is reliable (via **acknowledgements**).
-* Have **sequence numbers** for packets.
-* Is ordered (the recipient reassembles the packets that may be out of order in the lower layers).
-* Is **end-to-end error-checked**.
+- Is reliable (via **acknowledgements**).
+- Have **sequence numbers** for packets.
+- Is ordered (the recipient reassembles the packets that may be out of order in the lower layers).
+- Is **end-to-end error-checked**.
 
 The protocol has:
 
-* Flow control; sends packets at the correct rate to not overload the network. (Mostly send data at once, faster and less errors)
-* Retransmission. (If data or package loss from transmission, then TCP will help you to retransmit it)
-* Reassembly.
+- Flow control; sends packets at the correct rate to not overload the network. (Mostly send data at once, faster and less errors)
+- Retransmission. (If data or package loss from transmission, then TCP will help you to retransmit it)
+- Reassembly.
 
 A single machine can listen to multiple TCP channels on different **ports**.
-
 
 ## Application Layer
 
@@ -213,9 +203,9 @@ Tim Berners-Lee at CERN in 1991. Honestly a real chad, he invented:
 
 1. The **World Wide Web**(WWW), HTTP and its **request-response protocol**:
 
-   * Create a TCP connection (default port 80)
-   * Client sends the server a GET message
-   * Server responds with the contents of the webpage
+   - Create a TCP connection (default port 80)
+   - Client sends the server a GET message
+   - Server responds with the contents of the webpage
 
 2. **HTML (HyperText Markup Language)**: a way to express the contents of a webpage in a machine-independent format.
 
@@ -256,30 +246,35 @@ The actual HTML data is prefixed with a response **header**, detailing metadata 
 
 ### Variants of HTTP
 
-**HTTPS (HTTP Secure)**
+**`HTTP`**
 
-With plain HTTP, every router between the source and destination can see the raw data that is transmitted.
+HTTP (Hypertext Transfer Protocol) is the foundational protocol used by the World Wide Web to define how messages are formatted and transmitted, and what actions web servers and browsers should take in response to various commands. <br>
+It's a stateless protocol, meaning it doesn't retain session information, and it operates primarily on a request-response model between a client and a server.
 
-Uses shared private keys or something.
+**`HTTPS`**
 
-**HTTP/2**
+HTTPS is a secure extension of HTTP. <br>
+In HTTPS, the communication protocol is encrypted using Transport Layer Security (TLS), or formerly, its predecessor, Secure Sockets Layer (SSL). <br>
+The main motivation for HTTPS is to prevent wiretapping, man-in-the-middle attacks, and other forms of eavesdropping on the data being transferred between the user's browser and the website they are interacting with.
 
-Came out in 2015.
+**`HTTP/2`**
 
-Added extra features to HTTP:
-1. Header compression
-2. Server push (lets the server send a response without a request)
-3. Pipelining (allows client to send multiple requests so the server can respond in batches, allows more *parallel* communication instead of having the client wait for a response every single time)
-4. Multiplexing (talk to multiple websites over one TCP channel)
+HTTP/2 is the second major version of HTTP, was standardized in 2015 with the goal of improving the efficiency, speed, and security of data transmission over the internet.
 
-**HTTP/3**
+It introduced several key enhancements over HTTP, including:
+
+1. `Header compression` - HTTP/2 uses HPACK compression to reduce overhead.
+2. `Server push` - Enables servers to send resources to the client proactively, before they are explicitly requested, potentially improving load times. (lets the server send a response without a request)
+3. `Pipelining` (allows client to send multiple requests so the server can respond in batches, allows more _parallel_ communication instead of having the client wait for a response every single time)
+4. `Multiplexing` - Allows multiple requests and responses to be sent simultaneously over a single connection, reducing latency and improving page load times. (talk to multiple websites over one TCP channel)
+
+**`HTTP/3`**
 
 Not released yet.
 
-1. Now based on UDP instead of TCP (motivated by the increase in voice/video services)
-2. Uses even more multiplexing
-3. Avoids jitter by avoiding **head-of-line** blocking delays; allows content after a dropped packet to be delivered (?)
-
+1. `Build on UDP instead of TCP` - reduces connection establishment time and can improve performance in situations where packet loss occur. (motivated by the increase in voice/video services)
+2. `Uses even more multiplexing`
+3. `Elimination of Head-of-Line Blocking` - Since QUIC manages streams independently, packet loss affects only the specific stream, not the entire connection. (Avoids jitter by avoiding **head-of-line** blocking delays; allows content after a dropped packet to be delivered)
 
 ## Data Languages
 
@@ -292,10 +287,10 @@ Markup language for documents (1980s).
 A **declarative** (as opposed to an **imperative**) language. **Markup** specifies the structure and attributes of a document.
 
 <!-- HTML for highlighting, SGML doesn't seem to be supported -->
+
 ```html
 <QUOTE TYPE="example">
-    OK <ITALICS>This text</ITALICS> is
-    part of a block quote intended for example.
+  OK <ITALICS>This text</ITALICS> is part of a block quote intended for example.
 </QUOTE>
 ```
 
@@ -303,4 +298,5 @@ Extensible bracket types allow you to define new features without making breakin
 
 The structure of the document forms a tree structure: the content inside `<ITALICS>` is a child node to `<QUOTE>`.
 
-![Uploading image.png…]()
+Portability:
+make a tree and send it over the net (SGML is convertiable) (like to a cpp pragram, to a java program...)
