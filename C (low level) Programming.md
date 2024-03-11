@@ -369,7 +369,7 @@ The return value is an integer, wchich represents **a file descriptor**
 
 p.s. File descriptors represent a low-level way to interact with files and are obtained using system calls like open().
 
-## 2. `read()`
+### 2. `read()`
 
 This is a low-level input function used to **read bytes from a file descriptor into a buffer**. <br>
 Also a part of the POSIX API and is typically used with file descriptors that represent files, pipes, or sockets. <br>
@@ -425,7 +425,7 @@ ssize_t read(int fd, void *buf, size_t count);
 > close(fd);
 > ```
 
-## 3. `write()`
+### 3. `write()`
 
 like `read()`, is a low-level system call used for writing data to a file descriptor. It is also a part of the POSIX API. <br>
 `write()` also declared in the `<unistd.h>` header file on Unix-like operating systems.
