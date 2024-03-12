@@ -1,6 +1,6 @@
-# Debugging
+# Debugging & Debugger Tools
 
-## Debuggin strategies + tactics
+## Debugging strategies + tactics
 1. Don't debug! It's an inefficient way to find fix bugs <br />
     a) Prevent bugs from happening, when possible ---> static + <br />
     b) Make them easy to find when they do happen ---> dynamic checking <br />
@@ -12,7 +12,7 @@
 
 4. Defensive Programming <br />
 
-### Defensive Techniques
+### Defensive Programming Techniques
 1.  **Runtime checking of your own** <br />
 2.  **Assertions**: <br />
     ```c
@@ -56,3 +56,61 @@ say we have a big messy program that talks to outside world, and it is attacked 
 
 7. **Virtual Machines** <br />
 -   An **interpreter** that exams **machine code**
+
+## How to debug
+
+### Aside terminology:
+failure: program behaviour is wrong; User-visible problem <br />
+fault: latent bug in program that could cause failure under certain circumstances <br />
+error: mental mistake by the developer <br />
+error --> fault --> failure 
+
+And there is not standard what **bug** is referring to
+
+### Debugging Principles
+-   Don't guess! guessing doesn't scale to large program 
+-   More systematic <br />
+    1. Stablize the failure (reproduce the bug)
+    2. Locate the failures cause/source
+    3. Fix the bug 
+    > It is pretty common that the first two steps being most time-consuming
+
+## Debugger Tool
+This is going to be organized around GDB <br />
+Here are some reaons why GDB:
+- low-level debugging (either CS 33, CS 35L, CS 111)
+- lot of features (perhaps the oldest debugger still widely used)
+
+However, there is another common tool: `print` statement <br />
+
+### GDB
+`GDB` is a program, which puts itself into your program<br />
+> A process is a program in execution. <br />
+
+There are two approaches to use debugger
+-   Insolate `GDB` from your process (not the other way around, which is an one-way insolation) <br />
+-   Another one is to put debugger and process together, (like we are doing a `print` statement)
+    -   slightly less relaible but simplier 
+
+A `GDB` can:
+-   stop your process (not executing, frozen)
+-   read your process memory + registers
+-   write your memory + registers while frozen (like changing from x=27 to x=28)
+-   continue your programs
+
+#### **Getting Started**
+```shell
+gcc -g
+gcc -g3 
+```
+> This help generatind debugging info in .o files & executables <br />
+    debugging info contains: <br />
+    -   where function, global variables are <br />
+    -   what there types are
+
+One thing to mention, when compile with flag `-O2`, i.e., optimization, program runs faster but it is harder to debug <br />
+But with flag `-O0`, it is easier to debug but program runs slower <br />
+However, we cannot debug with `-O0` and run with `-O2`, because which changes the machine code behaviour <br />
+
+And `-Og` optimizes for debuggability, not as fast as `-O2`, but offer a choice to debug with optimization
+
