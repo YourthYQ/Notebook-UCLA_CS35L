@@ -643,6 +643,15 @@ Chromium, etc.
 
 > **TDD ASIDE:** If you write some test cases, and your program passes all the test cases, then you screwed up because you haven't found the bug you wanted to find. When you're writing test cases, you're trying to be imperfect. You're trying to think "how do I make this program crash?" Often times, tests are written by another class of developers because the self-interest of coders causes them to write bad test cases. **- Dr. Eggert, probably**
 
+### Debugging Principles
+-   Don't guess! guessing doesn't scale to large program 
+-   More systematic <br />
+    1. Stablize the failure (reproduce the bug)
+    2. Locate the failures cause/source
+    3. Fix the bug 
+    > It is pretty common that the first two steps being most time-consuming
+
+
 ## Debugging Tools
 
 Some examples are **GDB**, the GNU debugger, and [**Valgrind**](#valgrind).
@@ -704,13 +713,15 @@ Dropping a program into GDB:
 gdb diff
 ```
 
+  > Now `gdb` is running but `diff` is not
+
 Setting the working directory of the program when it starts up:
 
 ```console
 (gdb) set cwd /etc
 ```
 
-Setting environment variables for the debugging session:
+Setting environment variables for the debugging session: (This would apply to the program but not `gdb`)
 
 ```console
 (gdb) set env TZ America/New_York
@@ -718,10 +729,10 @@ Setting environment variables for the debugging session:
 
 A defense technique against buffer overflow attacks is to have the program run at randomized locations in memory (CS 33). By default, Linux executes programs in an environment with randomized addresses for the stack, heap, C library, etc. and many even the `main()` function.
 
-The downside of this program is that it will run differently every time. This means that if there's a bug that depends on stack addresses for example, then it may appear sometimes and not for others. This makes debugging harder, so by default, this option is already on:
+The downside of this program is that it will run differently every time. This means that if there's a bug that depends on stack addresses for example, then it may appear sometimes and not for others. This makes debugging harder, so b**y default**, this option is already **on**:
 
 ```console
-(gdb) set disable_randomization on
+(gdb) set disable_randomization on (or off)
 ```
 
 Actually running the program. The arguments you supply after `run` are in shell syntax and forwarded to the executable being debugged:
@@ -740,6 +751,12 @@ Releasing the program:
 
 ```console
 (gdb) detach
+```
+
+Backtrace the program, which gets where the program is (like calling what functions, haveing what pointers)
+
+```console
+(gdb) bt
 ```
 
 ### Controlling Your Program
@@ -817,6 +834,22 @@ GDB takes the process being debugged and modifies its machine code. It stomps on
 
 Single step through the code, and after each instruction, see if `p` has changed. This can be really slow unless youh have special hardware support for watchpoints. Many CPUs, including x86-64, have this support.
 
+### Extending GDB
+```console
+define pl
+  print *(long *) $arg1
+end
+
+(gdb) pl x 
+```
+The point here is that debugging tool should be extensive and programable
+* one example is `emacs/src/.gdbinit`
+> `GDB` supports either python or lisp
+
+### Remote Debugging
+If two machines have different architecture, there can be an issue that we need to translate the machine code from one to another <br />
+For example, from `x86-64` to `arm64`
+
 ### Other GDB Commands
 
 Printing a C expression (or register values):
@@ -827,6 +860,10 @@ Printing a C expression (or register values):
 (gdb) print $rax
 (gdb) print a[5]
 (gdb) print cos(3.0)
+
+(gdb) p/x n (hexidecimal)
+(gdb) p a[100]@10
+(gdb) p x=y (be careful, you are actually changing the status)
 ```
 
 It does more than just allow you to look at data. It lets you run a subroutine like `cos` in the program, which can modify the data and/or call arbitrary code from other parts of the program.
@@ -865,3 +902,7 @@ This makes GDB run on some virtual machine or something?
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({ tex2jax: {inlineMath: [['$', '$']]}, messageStyle: "none" });
 </script>
+
+```console
+(gdb) up/down
+```
