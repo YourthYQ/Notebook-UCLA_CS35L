@@ -112,6 +112,11 @@ There is debate whether `-fstack-protector` is a default option. Some Linux dist
 
 > **ASIDE:** The **halting problem** states that there is no algorithm for looking at a program and figuring out if it would halt. There's no way to look at a program to figure out if it would stack overflow (Alan Turing).
 
+
+### Return Oriented Program (R.O.P.)
+This is what the attacker trying to do. Which takes over return addresses and point them to your program somewhere else. <br />
+This tend to be slow, but useful to attackers. If they get enough return addresses, they can build a copied turing machine. <br />
+
 ### Performance Improvements
 
 **Performance optimization flags (-O, -Os, -Og, -O2, -O3, -O0)**: Different levels of optimization that can be applied during compilation to improve runtime performance at the cost of longer compilation times or more complex debugging.
@@ -483,7 +488,7 @@ The names inside the `__attribute__` label, like `nonnull` and `format`, are not
 
 ## Catching Bugs with Dynamic (Runtime) Checking
 
-Quick review of [`assort()`](#1-assert-macro).
+Quick review of [`assert()`](#1-assert-macro).
 
 An example of dynamic checking, where you check at _runtime_ and abort or similar if something fails:
 
@@ -546,7 +551,8 @@ Most of the time, these flags are useful for development only. They could be lef
 
 ## Valgrind
 
-You can run a program called Valgrind on any program, no special compilation flags:
+You can run a program called Valgrind on any program, no special compilation flags: <br />
+And you are not running on the source code, but the program itself.
 
 ```shell
 valgrind emacs
