@@ -175,6 +175,22 @@ M-: (functionp object)                      checks if passed in object is a func
 M-: (funcall function &rest arguments)      this call function with specific arguments.
 ```
 
+### Midterm Question
+
+> You are running Emacs, type `C-x 4 d RET`, and see a new buffer on your screen containing:
+>
+> `#midterm-answers.txt#` <br>
+> This file is likely an **auto-save** file. Emacs periodically saves the content you're editing into an auto-save file. This is not usually the main file but a backup to prevent data loss in case of a crash.
+>
+> `.#midterm-answers.txt` <br>
+This file appears to be a **lock** file. Emacs uses lock files to indicate that a file is being edited, to prevent concurrent editing sessions on the same file which could lead to conflicts or data loss.
+>
+> `midterm-answers.txt` <br>
+This is likely the main file that contains the content for the midterm answers.
+>
+> `midterm-answers.txt~` <br>
+This file is likely a **backup** file. Emacs (and many other text editors) creates a backup of the original file when you start editing, appending a tilde ~ to the end of the filename.
+
 ## Regular expressions(regex)
 
 Regex are used for matching patterns within strings, and they can vary slightly in syntax and capabilities across different programming languages and tools.
