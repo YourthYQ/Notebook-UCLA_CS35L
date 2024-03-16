@@ -14,9 +14,8 @@ Unix has played a pivotal role in the development of modern operating systems, p
 `GNU/Linux` is an OS combines the Linux kernel with GNU utilities and applications. Emacs, being one of the many applications developed under the GNU Project, is included in almost all GNU/Linux distributions as a powerful text editor.
 
 > **Why use Emacs for things like cloud computing even in the modern day?**
-> 
+>
 > Such applications are at the mercy of networking, which are orders of magnitude slower than operations on a local file system. Thus, they care a lot about **throughput(吞吐量)** and **latency(延迟)**, and terminal interfaces can deliver because they are simple and fast.
-
 
 ## Implementation
 
@@ -36,20 +35,17 @@ The I/O devices like mouse, keyboard, and display communicate with the applicati
 
 Programs typically have their own interpreters embedded in their own executables. For example, Chromium executables come with a JavaScript interpreter included in them.
 
-
 ## Concept of Buffers
 
-* Emacs makes use of **buffers** to be *fast*. Buffers are just **a bunch of text that live in RAM**.
-* Emacs (and editors in general) makes a clear distinction between what's *persistent* and what's not to balance speed and reliability. For work that is rapidly changing like when you're typing a sentence, we have very performant buffers. Only when work is ready to be saved, the application can flush the buffer to the filesystem in one fell swoop(一次性).
-
+- Emacs makes use of **buffers** to be _fast_. Buffers are just **a bunch of text that live in RAM**.
+- Emacs (and editors in general) makes a clear distinction between what's _persistent_ and what's not to balance speed and reliability. For work that is rapidly changing like when you're typing a sentence, we have very performant buffers. Only when work is ready to be saved, the application can flush the buffer to the filesystem in one fell swoop(一次性).
 
 ### Auto-generated Files
 
-* By convention, file names starting with `.#` indicate a symbolic link to a file that is currently being edited by another program.
-* When editing a file `F` in Emacs:
+- By convention, file names starting with `.#` indicate a symbolic link to a file that is currently being edited by another program.
+- When editing a file `F` in Emacs:
   - Emacs creates a symlink `.#F` that signals other programs that the file is being edited.
   - Emacs creates a file `#F#`, a copy of the unsaved buffer for `F` as part of its auto-save feature, a safety mechanism for in case Emacs or the computer crashes. This file disappears on write.
-
 
 ## Editor Navigation: Moving the Point
 
@@ -58,12 +54,12 @@ Programs typically have their own interpreters embedded in their own executables
 The current cursor position is called the **point**.
 
 From **anywhere**:
+
 ```
 M-g g NUM RET     Go to line number NUM
 ```
 
 At any point, you can use `C-l` (that's a lowercase L) to vertically center the point if possible. Use `C-l` again to bring the current line to the top of the viewport.
-
 
 ## Help System
 
@@ -77,7 +73,6 @@ C-h a <regex> RET               search for a command
 M-x apropos RET <query> RET     search for a command
 M-x apropos-command RET         like the one above, used to search certain command
 ```
-
 
 ## Extended Commands
 
@@ -102,11 +97,9 @@ C-k C-k         delete content of a line, and then its newline
 
 This behavior is determined by how they're implemented - whether they take that optional numeric argument in the first place and what they do with it.
 
-
 ## Window and Buffer Navigation
 
 Opening another window for the same buffer does not duplicate the buffer; any edits in one buffer will affect the other(s). You can still use this when you want to reference some other part of the buffer while typing in another region.
-
 
 ## Shell within Emacs
 
@@ -114,13 +107,12 @@ Opening another window for the same buffer does not duplicate the buffer; any ed
 
 > **A:** It won’t even really work for one iteration because the emacs shell does not emulate(模仿) many of the terminal features that emacs needs to run smoothly.
 
-
 ## Selection Manipulation
 
 Concept of the "current region (of current buffer)":
 
-* You can save pointers called **marks** at arbitrary positions within a buffer.
-* The **current region** is all the characters between the mark and the point.
+- You can save pointers called **marks** at arbitrary positions within a buffer.
+- The **current region** is all the characters between the mark and the point.
 
 You can **set a mark** at the current point with `C-SPC` or `C-@`. An example of selecting a region of text:
 
@@ -136,13 +128,12 @@ M-|             pipe buffer into a shell command
 
 You can find out where your mark is with `C-x C-x`, which exchanges point and mark (selects the text between them). You can `C-g` to cancel the selection.
 
-
 ### Modes
 
 Emacs is a **modeful** editor. That means the current state of Emacs not only includes the contents of the current files being edited but also what way you intend to be using the editor next. A **mode** is like a method of interacting with the editor.
 
-* **Upside:** more efficient for experts
-* **Downside:** confusing/tricky for non-experts
+- **Upside:** more efficient for experts
+- **Downside:** confusing/tricky for non-experts
 
 ```
 M-x MODENAME            switch to mode
@@ -177,7 +168,7 @@ M-: (insert YOUR_STRING)                    insert
 M-: (elt SEQUENCE INDEX)                    get the element at passed index
 M-: (message “%s” this-command)             prints the name of current command
 M-: (message "%s" last-command)             same as above
-M-: (plist-get PLIST PROPERTY)              prints the corresponding value of passed in 
+M-: (plist-get PLIST PROPERTY)              prints the corresponding value of passed in
                                             property in the passed in plist
 M-: (prefix-numeric-value &optional ARG)
 M-: (functionp object)                      checks if passed in object is a function
@@ -189,7 +180,7 @@ M-: (funcall function &rest arguments)      this call function with specific arg
 Regex are used for matching patterns within strings, and they can vary slightly in syntax and capabilities across different programming languages and tools.
 
 ```
-Special Characters:
+Special Characters (without`[]`):
 .               any single char except newline  a.c   abc
 \               escape a special char    \.\*\+\?\$\^/\\  .*+?$^/\
 ^               start of string or start of line   ^abc.*   abcksfafkjas
@@ -200,11 +191,11 @@ $               end of string or end of line   askf$   ~askf
 ]               this is special when it ends a char alternative [ … ]
 -               this is special when it is inside of a char alternative [a-z]
 
-Character Classes:
+Character Classes (with `[]`):
 [ … ]           one of the chars in the brackets  [aeiou]   a or e or i …
 [x-y]           one of the chars in the range from x to y [a-z]   letter a-z
 [^x]            one char that is not x
-[^x-y]          one char that is not in the range  [^a-z]   A ? ./ 
+[^x-y]          one char that is not in the range  [^a-z]   A ? ./
 [:ascii:]       POSIX class of all ascii chars
 [:alpha:]       POSIX class of all alphabetical chars
 [:digit:]       POSIX class of all numerical chars
@@ -218,3 +209,64 @@ p1\|p2          any match for p1 or p2
 [^^]            char that is not ‘^’
 [^-]            char that is not ‘-‘
 ```
+
+### How can Character Class (with `[]`) handle special characters?
+
+In a regular expression character class (the part within the square brackets `[...]`), some **special characters** lose their special meaning if they are placed immediately after the opening `[` or just before the closing `]` or escape it with a backslash `\`.
+
+#### 1\. `[` - opening bracket
+
+When you want to include a literal opening bracket `[` within a character class, you must escape it with a backslash `\`.
+
+```shell
+[a-z\[]     # valid
+[a-z\[1-9]  # valid
+[[a-c]      # invalid
+[a-c[]      # invalid
+```
+
+#### 2\. `]` - closing bracket
+
+When including a literal closing bracket `]`, you can either place it immediately after the opening square bracket `[` or using a backslash `\` as escaption.
+
+```shell
+[]a-z]      # valid
+[a-z\]1-9]  # valid
+[a-z]]      # invalid
+```
+
+#### 3\. `-` - hyphen
+
+The hyphen `-` has a special meaning in character classes in regular expressions; it's used to specify a range of characters.
+
+However, if you want to include a hyphen as a literal character in a character class, you can 1. place it immediately after the opening square bracket `[` or 2. place it immediately before the opening square bracket `]` or 3. using a backslash `\` as escaption.
+
+```shell
+[-a-c]    # valid
+[a-c-]    # valid
+[a\-c]    # invalid
+```
+
+#### 4\. `^` - caret
+
+When placed at the start of a character class, it negates the class, matching anything not specified within the brackets (e.g., [^a-z] matches anything that is not a lowercase letter).
+
+Elsewhere, it's treated as a literal character.
+
+#### 5\. `\` - backslash
+
+Used to escape other special characters or signify special character sequences.
+
+Within a character class, it can escape another backslash (e.g., `[\\]` to match a single backslash), a hyphen, or a closing bracket.
+
+#### 6\. Special Sequences
+
+Certain character classes are represented by shorthand sequences:
+`\d` matches any digit (equivalent to [0-9]).
+`\D` matches any character that is not a digit (equivalent to [^0-9]).
+`\w` matches any word character (equivalent to [a-zA-Z0-9_]).
+`\W` matches any character that is not a word character (equivalent to [^a-zA-Z0-9_]).
+`\s` matches any whitespace character (e.g., space, tab, newline).
+`\S` matches any character that is not a whitespace character.
+
+**NOTE**: The underscore `_` is considered a word character in regular expressions because of historical reasons and its common usage in programming and writing. (e.g., user_name vs. username) and allows for names that resemble natural language more closely without spaces.
