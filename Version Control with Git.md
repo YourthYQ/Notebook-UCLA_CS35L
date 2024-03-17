@@ -58,15 +58,28 @@ Git used `workflows` which can be broken into three steps and three states namel
                    ----------->           ----------->              ----------->
 ```
 
-### `Modified`
+---
 
-**Modify files** in your working directory. <br>
+**Working Directory**:
+
+A `Working Directory` refers to the currently active directory on your filesystem that has been initialized with a Git repository. This is the directory where all your files and subdirectories that are **tracked** by Git reside.
+
+The `Working Directory` is defined to be **CHANGED** whenever you modify files in your filesystem, regardless of whether those changes have been staged or committed.
+
+---
+
+### `Modified` / `Untracked`
+
+**Modified files** in your working directory. <br>
 Adding, Removing, and Updating any files inside the repository all belong to Modified state. In this state, Git knows the file has changed, but does not track it.
+
+**Untracked files** in your working directory. <br>
+When a file is first created or brought into a directory that is part of a Git repository but has not yet been introduced to Git, it is untracked. Git does not monitor changes to untracked files until they are added to the tracking system.
 
 - `$ git add file_name` - used to stage the file into commit (adds changes to the staging area)
 - `$ git restore --stage file_name` - unstage the file from the commit
 
-### `Staged`
+### `Staged` & `Tracked`
 
 **Stage the changes**, marking them for inclusion in the next commit <br>
 In order for Git to track a file, it needs to put(add) in the staged area. Once added, any modifications are tracked.
@@ -76,7 +89,7 @@ In order for Git to track a file, it needs to put(add) in the staged area. Once 
 
 ### `Committed`
 
-**Commit the changes**, which takes the files as they are in the staging area and stores that snapshot permanently in your Git directory. <br>
+**Commit the changes**, which takes the files as they are in the staging area and stores that snapshot permanently in your **LOCAL** Git directory. <br>
 Committing a file in Git is like a save point in many ways. Git will save the file, and have a snapshot of the current changes.
 
 **NOTE**: Once you're satisfied with the changes in the staging area, you use the git commit command to take a snapshot of those changes. This snapshot is stored in your **local** repository. The commit has a unique identifier (a commit hash) and includes metadata such as the author, a message describing the changes, and so forth. At this point, the changes are safe on your **local** machine, but they're **NOT** yet shared with others or stored in a remote location.
@@ -84,7 +97,6 @@ Committing a file in Git is like a save point in many ways. Git will save the fi
 After committed to your local machine, you need to use the following command to store it in a romote repository:
 
 - `$ git push` - publish the local commits to a remote repository
-
 
 ## Viewing Status
 
@@ -96,20 +108,19 @@ git status
 
 Each file can be in the following states:
 
-* Staged
-* Not staged but modified
-* Untracked
-
+- Staged
+- Not staged but modified
+- Untracked
 
 ## Commit Messages
 
-Commit messages are important because in essence, they help "market" your changes. They tell readers of the repository why certain commits were made and whether it was a "good" commit by explaining the *motivation* behind the changes. "Why are you making this change? Why shouldn't I just revert it?"
+Commit messages are important because in essence, they help "market" your changes. They tell readers of the repository why certain commits were made and whether it was a "good" commit by explaining the _motivation_ behind the changes. "Why are you making this change? Why shouldn't I just revert it?"
 
 The rationale behind commit messages are similar to why you should comment your code. Oh yeah have I mentioned that:
 
 > **COMMENTS SAVE LIVES. ALWAYS COMMENT YOUR CODE. PLEASE.**
 
-There is overlap between comments in the source code and commit messages, but the primary distinction is the *audience*. Commit messages are more historically oriented, what you would tell the "software historian," people interested in the development of the repository as a whole. Comments in the source code are for the "current developer," people interested in having to study or change your code.
+There is overlap between comments in the source code and commit messages, but the primary distinction is the _audience_. Commit messages are more historically oriented, what you would tell the "software historian," people interested in the development of the repository as a whole. Comments in the source code are for the "current developer," people interested in having to study or change your code.
 
 There are many style guidelines for commit messages out there, but here's Eggert's (which looks pretty standard in my experience).
 
@@ -123,12 +134,11 @@ Fix issues found by ASAN and Coverity
 * tests/scripts/functions/let: Test empty let variable.
 ```
 
-The first line should be at most 50 characters, and this acts as the "subject line" for the commit, like the elevator pitch. This should give any readers the *gist* of the commit.
+The first line should be at most 50 characters, and this acts as the "subject line" for the commit, like the elevator pitch. This should give any readers the _gist_ of the commit.
 
 The second line should be empty, separating the subject line from the body.
 
 The remaining lines should be at most 50 lines, each at most 72 characters per line. Here you describe the finer details of the commit. You can use paragraphs, `*`-bulleted lists, etc.
-
 
 ## Exploring the Log
 
@@ -229,17 +239,15 @@ git log HEAD^!
 # A way to specify a commit but exclude its parents
 ```
 
-
 ## Working Files and Index
 
-
-Technically a plumbing command, this is Git's version of `ls`, where it displays the current *working files*:
+Technically a plumbing command, this is Git's version of `ls`, where it displays the current _working files_:
 
 ```shell
 git ls-files
 ```
 
-This helps us distinguish between general files in the directory and files that currently *matter* with respect to the repository. These are the files that are currently being **tracked** by Git.
+This helps us distinguish between general files in the directory and files that currently _matter_ with respect to the repository. These are the files that are currently being **tracked** by Git.
 
 ```shell
 rm $(git ls-files)  # lol!
@@ -253,65 +261,68 @@ git grep waitpid
 
 <!-- Yeah, um, the whole "plan for the future" way of putting it by Dr. Eggert didn't really make sense to me. -->
 
-The **index** is what you have ready for the next commit, but have not committed yet.
+The **index** is what you have ready for the next commit, but have not committed yet (namely, in the staging area).
 
 ## Viewing Differences
-
 
 `git diff` is similar to the GNU `diff` command, and like a more detailed version of `git status`.
 
 > **HISTORICALLY:** The algorithm is very complex and was developed by a professor at the University of Arizona who went on to work on the Human Genome Project.
 
-Viewing the difference between the *index* and the *working files*: `Δ(index vs working files)`:
+> **Exit Code:**
+>
+> 1. `git diff` with an exit status of `0` means there is **NO** difference, with an exit status of `1` means there **IS** a difference.
+>
+> 2. In Unix-like operating system shells and Git commands, an exit status of `0` represents **True**, while a non-zero exit status like `1` typically represents **False**.
 
-```shell
-git diff
-```
+1. Viewing the difference between the _working directory_ and the _staging area_: `Δ(working directory vs index)`:
 
-This views the difference between the latest commit and the index: `Δ(latest commit vs index)`:
+   ```shell
+   $ git diff
+   ```
 
-```shell
-git diff --cached
-git diff --staged  # equivalent
-```
+2. This views the difference between the _latest commit_ and the _staging area_: `Δ(latest commit vs index)`:
 
-And this is `Δ(last commit vs working files)`
+   ```shell
+   $ git diff --cached
+   $ git diff --staged  # equivalent
+   ```
 
-```shell
-git diff HEAD
-```
+3. And this is `Δ(working directory vs last commit)`
 
-Compare the grandparent commit to the latest commit:
+   ```shell
+   $ git diff HEAD
+   ```
 
-```shell
-git diff HEAD^^..HEAD
-```
+4. Compare the grandparent commit to the latest commit:
+
+   ```shell
+   $ git diff HEAD^^..HEAD
+   ```
 
 <!-- From discussion notes. -->
 
-More examples of viewing the difference between two commits:
+5. More examples of viewing the difference between two commits:
 
-```shell
-# Typically with SHAs of the specific commits you want
-git diff REF..REF
+   ```shell
+   # Typically with SHAs of the specific commits you want
+   $ git diff REF..REF
 
-# But you can also abbreviate the hashes:
-git diff 5c6cb30..53bf6bd
-git diff 5c6c..54bf
+   # But you can also abbreviate the hashes:
+   $ git diff 5c6cb30..53bf6bd
+   $ git diff 5c6c..54bf
 
-# But this has a limit. This fails:
-git diff 5c6..53b
+   # But this has a limit. This fails:
+   $ git diff 5c6..53b
 
-# As usual you can use the HEAD ref to reference commits relative to
-# the last commit:
-git diff HEAD~..HEAD
-git diff HEAD~4..HEAD
-git diff HEAD^..HEAD
-```
-
+   # As usual you can use the HEAD ref to reference commits relative to
+   # the last commit:
+   $ git diff HEAD~..HEAD
+   $ git diff HEAD~4..HEAD
+   $ git diff HEAD^..HEAD
+   ```
 
 ## Making Changes
-
 
 Typical workflow:
 
@@ -348,26 +359,6 @@ There's also the `-x` option which cleans files that will even be ignored:
 git clean -nx  # you best see what that would do first lol
 git clean -x
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## Configuring Git
 
@@ -724,26 +715,26 @@ Rebasing is less "formal" than merging. Changes are looser, but are recorded as 
 The scenario looks something like:
 
 1. You're working on the next change in your branch.
-2. You want to switch to some other branch NOW. You *could* commit what you have right now, but that is bad practice because you're essentially committing junk. "You want your repository to be in good shape at all times."
+2. You want to switch to some other branch NOW. You _could_ commit what you have right now, but that is bad practice because you're essentially committing junk. "You want your repository to be in good shape at all times."
 3. Instead, you could save your changes in an external file:
 
-    ```shell
-    git diff > mywork.diff # generates a diff file of your uncommitted changes and redirects the output to a file named `mywork.diff`. This file now contains all the changes you've made since the last commit
+   ```shell
+   git diff > mywork.diff # generates a diff file of your uncommitted changes and redirects the output to a file named `mywork.diff`. This file now contains all the changes you've made since the last commit
 
-    git checkout -f  # forcefully switches branches and discards any changes in your working directory.
-    ```
+   git checkout -f  # forcefully switches branches and discards any changes in your working directory.
+   ```
 
 4. Checkout to the other branch and do work on it
 
-    ```shell
-    git checkout main
-    ```
+   ```shell
+   git checkout main
+   ```
 
 5. Checkout back your original branch and patch it.
 
-    ```shell
-    patch < mywork.diff -r1
-    ```
+   ```shell
+   patch < mywork.diff -r1
+   ```
 
 Git actually provides a way to do this within Git itself, using the `stash` command. At step 3, you would do something like:
 
@@ -757,9 +748,11 @@ This saves the state of your working files in some part of the index. When you w
 git stash apply
 ```
 
-## Bisecting
+# Debugging with Git
 
-Suppose you have a linear piece of history where somewhere between a stable version and the most recent commit, something went wrong. You can think of this problem of finding the first faulty commit as partitioning the timeline into OK and NG ("not good") sections, hence *bisecting*.
+## Bisecting (Binary Search)
+
+Suppose you have a linear piece of history where somewhere between a stable version and the most recent commit, something went wrong. You can think of this problem of finding the first faulty commit as partitioning the timeline into OK and NG ("not good") sections, hence _bisecting_.
 
 The timeline is "sorted" in that if you think of OK=0 and NG=1, the history will always be such that all NGs follow OKs.
 
@@ -770,7 +763,7 @@ OK        OK    OK  |  NG    NG     NG
                     |
 ```
 
-This then becomes a classic *binary search* problem, where we can identify the first NG commit in O(logN) time.
+This then becomes a classic _binary search_ problem, where we can identify the first NG commit in O(logN) time.
 
 Starting a bisect in Git:
 
@@ -794,17 +787,15 @@ Of course, this also introduces the problem that if your test cases are buggy, t
 git bisect skip v3
 ```
 
-
 ## Collaborative Best Practices
-
 
 <!-- From discussion notes. -->
 
 **Branches:**
 
-* `master` or `main`: stable branch
-* `develop`: for development
-* Each team member may create their branches for individual features/bugs
+- `master` or `main`: stable branch
+- `develop`: for development
+- Each team member may create their branches for individual features/bugs
 
 Protect the `master` branch. DON'T force-push; it could destroy the commit history. Don't be that guy.
 

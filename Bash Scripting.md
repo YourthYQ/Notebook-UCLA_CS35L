@@ -109,10 +109,10 @@ echo $greeting # print "Hello, World!"
 * While-loop
     ```bash
     # Repeat while a condition is true
-    count = 1
+    count=1
     while [ $count -le 5 ]; do
       echo “Count: $count”
-      count = $((count + 1)) # $((...)) is used for arithmetic expansion (we will see it later)
+      count=$((count + 1)) # $((...)) is used for arithmetic expansion (we will see it later)
     done
     ```
 
@@ -120,6 +120,7 @@ echo $greeting # print "Hello, World!"
 * In shell scripting, we **don’t specify parameters inside parentheses** while declaring, parameters are passed to the function when it is called instead.
 * While calling the function great() below, we use ”$1” to get the parameters (“$1, $2, $3…” is positional parameters similar in Python). This “1” refers to the first argument passed to the function.
 * “$0” is a special case: it refers to the name of the script itself, not a function parameter
+* "$@" is a list of all the command line arguments
 
 ```bash
 # function declaration and definition
@@ -138,7 +139,7 @@ great “Alice” 123456789
 Simply prefix the variable name with a `$`
 
 ```bash
-name = “Alice”
+name=“Alice”
 echo “Hello, $name!”
 ```
 

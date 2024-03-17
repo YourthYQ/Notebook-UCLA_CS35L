@@ -83,7 +83,11 @@ We can simply protect against **stack overflow attacks**:
 $ gcc -fstack-protector
 ```
 
-`-fstack-protector` adds a random value before the return address on the stack. This value is checked before returning from a function to ensure it hasn't been overwritten, which would indicate a stack overflow attack.
+`-fstack-protector` adds a **canary** -a randomly generated value- before the return address on the stack. This value is checked before returning from a function to ensure it hasn't been overwritten, which would indicate a stack overflow attack.
+
+> **Simpler Imagination of using `-fstack-protector`**
+>
+> You start by setting aside a random value (the canary) before doing anything risky. Then, after you're done, you check if that value got messed up by someone trying to attack your program. If it did, you know there's trouble, and you stop everything to prevent the attacker from causing harm.
 
 This generates extra code in your function. It is as if you added something like:
 
@@ -112,14 +116,41 @@ There is debate whether `-fstack-protector` is a default option. Some Linux dist
 
 > **ASIDE:** The **halting problem** states that there is no algorithm for looking at a program and figuring out if it would halt. There's no way to look at a program to figure out if it would stack overflow (Alan Turing).
 
-
 ### Return Oriented Program (R.O.P.)
+
 This is what the attacker trying to do. Which takes over return addresses and point them to your program somewhere else. <br />
 This tend to be slow, but useful to attackers. If they get enough return addresses, they can build a copied turing machine. <br />
 
 ### Performance Improvements
 
-**Performance optimization flags (-O, -Os, -Og, -O2, -O3, -O0)**: Different levels of optimization that can be applied during compilation to improve runtime performance at the cost of longer compilation times or more complex debugging.
+**Performance optimization flags (-O, -Os, -Og, -O2, -O3, -O0)** <br>
+Optimization flags are used by compilers to alter the way a program is compiled, which allow programmers to customize the tradeoffs among 1. debugging efficiency, 2. run time, and 3. compile time.
+
+1. `-O0` (No optimization, default one) <br>
+**Debugging**: Easiest at this level because the code is compiled without any changes or optimizations. The program's structure closely mirrors the source code, so variable values and the flow of execution are predictable and match the source code, making it easier to step through with a debugger. <br>
+**Running Time**: Slowest, because no optimizations are applied that could speed up the execution. The program runs exactly as written, which might not be efficient. <br>
+**Compile Time**: Fastest, because the compiler does minimal work. It translates the source code directly into machine code without spending time analyzing the code for potential optimizations.
+
+2. `-O1` <br>
+**Debugging**: Still manageable, but slightly harder than at -O0 because the compiler has started to modify and optimize the code. Some optimizations may alter the flow of execution or optimize away variables, which can make debugging more challenging. <br>
+**Running Time**: Faster than -O0, as some basic optimizations are applied to make the program execute more efficiently. <br>
+**Compile Time**: Slightly slower than -O0 because the compiler does some analysis and optimization work, but generally not too much of a difference.
+
+3. `-O2` <br>
+**Debugging**: More difficult than -O1 because -O2 includes more aggressive optimizations. Variables may be optimized away, execution can be reordered, and some functions may be inlined, making it harder to trace through the program with a debugger. <br>
+**Running Time**: Generally much faster than -O1 because -O2 turns on a broad range of optimizations that focus on improving execution speed without regard to code size. <br>
+**Compile Time**: Longer than -O1 due to more complex optimizations being performed by the compiler, which requires more analysis and transformation of the code.
+
+4. `-O3` <br>
+**Debugging**: Most difficult at this level. The compiler applies all the optimizations of -O2 plus even more aggressive optimizations that can significantly change the structure of the code. This can make debugging with traditional step-through methods quite challenging. <br>
+**Running Time**: Potentially the fastest, although not all programs will see a performance gain from -O3 over -O2, and some may even run slower if the aggressive optimizations lead to poorer cache usage or other overheads. <br>
+**Compile Time**: Longest, as the compiler spends a lot of time performing extensive analysis to apply complex optimizations.
+
+5. `-Os` <br>
+This flag enables optimizations that focus on reducing the size of the executable. The compile time can be longer than with -O0 because the compiler is performing extra work to reduce the code size. The running time may be improved over -O0, especially on systems where memory bandwidth is a limiting factor, as a smaller executable can fit better in cache. However, debugging might be more challenging than with -O0 because some optimizations may rearrange or eliminate code, making the debugging process less straightforward.
+
+6. `-Og` <br>
+This flag is designed to provide a reasonable level of optimization without impeding the debugging process. The compile time will likely be longer than -O0 because it includes more optimization passes, but typically shorter than -Os because it doesn't include all size reduction strategies. The running time will be shorter than with -O0 due to the applied optimizations, but potentially longer than with -Os depending on the specific size-related optimizations that -Os might apply. Debugging is easier than with -Os, as -Og optimizations are chosen to preserve more debugging information.
 
 The `-O`, `-O2`, `-O3`, etc. flags to specify the level of \*optimization **for CPU usage\***.
 
@@ -270,6 +301,7 @@ int main() {
 ```
 
 When assert(a == 5); is executed and a is not equal to 5, it will produce an error message like this:
+
 ```shell
 Assertion failed: a == 5, file example.c, line 8
 ```
@@ -551,14 +583,22 @@ Most of the time, these flags are useful for development only. They could be lef
 
 ## Valgrind
 
+Valgrind is a programming tool for **memory debugging, memory leak detection, and profiling**. It can detect many memory-related errors that are common in C and C++ programs and that can lead to crashes and unpredictable behavior.
+
 You can run a program called Valgrind on any program, no special compilation flags: <br />
 And you are not running on the source code, but the program itself.
 
+**Run Valgrind**: Use Valgrind to start your program. The simplest command is:
+
 ```shell
-valgrind emacs
+valgrind ./myprogram
 ```
 
 This runs the program in a special environment and allows for more runtime checking.
+
+**Analyze Output**: Valgrind will output information about memory leaks and errors it detects. For example, it might report memory that was allocated but never freed.
+
+**Use Valgrind Tools**: Valgrind includes several tools; `memcheck` is the default and most widely used for memory error detection. You can specify a tool with the `--tool` option.
 
 The summary screen displays information about memory leaks.
 
@@ -629,7 +669,7 @@ Chromium, etc.
 
    4. Exception handling.
 
-   5. **Barricades**.
+   5. **Barricades**(路障).
 
       ```
       +----------------+----------------+
@@ -638,7 +678,7 @@ Chromium, etc.
       +----------------+----------------+
                      ^
          some barricade that processes
-         code from the outide world, which
+         code from the outside world, which
          you assume to be bad, before it
          makes it into your code
       ```
@@ -650,19 +690,35 @@ Chromium, etc.
 > **TDD ASIDE:** If you write some test cases, and your program passes all the test cases, then you screwed up because you haven't found the bug you wanted to find. When you're writing test cases, you're trying to be imperfect. You're trying to think "how do I make this program crash?" Often times, tests are written by another class of developers because the self-interest of coders causes them to write bad test cases. **- Dr. Eggert, probably**
 
 ### Debugging Principles
--   Don't guess! guessing doesn't scale to large program 
--   More systematic <br />
-    1. Stablize the failure (reproduce the bug)
-    2. Locate the failures cause/source
-    3. Fix the bug 
-    > It is pretty common that the first two steps being most time-consuming
 
+- Don't guess! guessing doesn't scale to large program
+- More systematic <br />
+  1. Stablize the failure (reproduce the bug)
+  2. Locate the failures cause/source
+  3. Fix the bug
+     > It is pretty common that the first two steps being most time-consuming
 
 ## Debugging Tools
 
 Some examples are **GDB**, the GNU debugger, and [**Valgrind**](#valgrind).
 
-**strace** is a command that outputs the system calls a program uses, as if there were many `printf` logging calls in the source code.
+**GDB** is a portable debugger that works with many programming languages, including C and C++. It allows you to see what is going on inside another program while it executes or what another program was doing at the moment it crashed. GDB offers facilities for you to control the execution of the program, to inspect the values of variables, and to call functions independently of the program's normal behavior.
+
+Key Features:
+
+1. **Start and Stop Programs**: Control the execution of your program, specifying anything that might affect its behavior.
+
+2. **Inspect Values**: Check the values of variables at specific points during program execution.
+
+3. **Change Variables**: Modify variable values to test different execution paths.
+
+4. **Call Functions**: Execute functions within the context of your running program, regardless of the program's normal behavior.
+
+5. **Breakpoints and Watchpoints**: Stop the program execution at specified points or when variables change.
+
+---
+
+p.s. **strace** is a command that outputs the system calls a program uses, as if there were many `printf` logging calls in the source code.
 
 ```shell
 #      vvvvvvvvvvvvvvvvvvv any shell command
@@ -670,6 +726,8 @@ strace cat /etc/os-release
 ```
 
 Other commands we've seen before like `ps` and `top` are also [_DevOps tools_](Cloud%20Computing.md). System administrators use this to monitor server activity, but they can also be useful for debugging.
+
+---
 
 ## How Debuggers Work
 
@@ -719,7 +777,9 @@ Dropping a program into GDB:
 gdb diff
 ```
 
-  > Now `gdb` is running but `diff` is not
+> Now `gdb` is running but `diff` is not
+
+### 1. After compiling your program with debug symbols, you start GDB by specifying the program's executable name. Inside GDB, you can set the working directory (`set cwd`) and environment variables (`set env`) for the program. This is crucial for programs that depend on specific directory paths or environment settings.
 
 Setting the working directory of the program when it starts up:
 
@@ -733,6 +793,8 @@ Setting environment variables for the debugging session: (This would apply to th
 (gdb) set env TZ America/New_York
 ```
 
+### 2. **Address space layout randomization** (ASLR) is a security feature that randomizes memory addresses used by a program, making it harder for malicious exploits to predict the location of specific processes. However, this can make debugging unpredictable. GDB allows you to disable this feature (`set disable_randomization`) to make debugging sessions more consistent.
+
 A defense technique against buffer overflow attacks is to have the program run at randomized locations in memory (CS 33). By default, Linux executes programs in an environment with randomized addresses for the stack, heap, C library, etc. and many even the `main()` function.
 
 The downside of this program is that it will run differently every time. This means that if there's a bug that depends on stack addresses for example, then it may appear sometimes and not for others. This makes debugging harder, so b**y default**, this option is already **on**:
@@ -740,6 +802,10 @@ The downside of this program is that it will run differently every time. This me
 ```console
 (gdb) set disable_randomization on (or off)
 ```
+
+## Running the Program
+
+### 1. In GDB, you can start your program with specific arguments using `run`. If your program is already running, you can attach GDB to it with its process ID (`attach`) and later release it using (`detach`) without stopping the program. To examine the program's call stack and understand how it reached its current state, use `bt` (backtrace).
 
 Actually running the program. The arguments you supply after `run` are in shell syntax and forwarded to the executable being debugged:
 
@@ -765,11 +831,17 @@ Backtrace the program, which gets where the program is (like calling what functi
 (gdb) bt
 ```
 
-### Controlling Your Program
+## Controlling the Program
+
+### Control commands like `continue`, `step`, `next`, and their variants allow you to navigate through the program execution. These commands let you execute the program line by line, step into functions, or continue execution until the next breakpoint.
 
 `^C` stops the program. GDB takes control.
 
 `*(int *)0=27` crashes the program and falls under GDB's control.
+
+### 1. `continue` or `c`
+
+Resumes the execution of the program until it hits the **next breakpoint, watchpoint**, or until the program terminates.
 
 Continue running the code:
 
@@ -777,6 +849,10 @@ Continue running the code:
 (gdb) # c
 (gdb) continue
 ```
+
+### 2. `step` or `s` (moves INTO function calls)
+
+Executes the **next line** of code in the program. If the line contains a function call, step enters the function and pauses **at the first line of that function**.
 
 Single step through the source code. Similarly, single step through the machine code.
 
@@ -790,6 +866,10 @@ Single step through the source code. Similarly, single step through the machine 
 Stepping can be tricky because there isn't always a sequential mapping of source code lines to machine code lines. Stepping through some machine code lines may make it look like the program is jumping back and forth between source code lines instead of running one-by-one in order.
 
 A courser-grained variant of the `step` command. Advancing to the next line of source code at the current function call level i.e. a single step but without worrying about function calls, stepping "over" them. Similarly, it has a machine code version.
+
+### 3. `next` or `n` (steps OVER function calls)
+
+Executes the next line of code similar to step, but if the line contains a function call, next executes the entire function as a single step and pauses when the function returns. Mainly use in the recursive function.
 
 All these commands control the **instruction pointer**, e.g. `%rip` on x86-64.
 
@@ -805,6 +885,10 @@ Finish the current function and then stop:
 ```console
 (gdb) fin
 ```
+
+## Breakpoints and Watchpoints
+
+### 1. Breakpoints are one of the most powerful features of GDB. You can set a breakpoint at specific functions or line numbers (`break`), causing the program to pause execution when it reaches these points. This lets you examine the program's state in detail.
 
 You can use **breakpoints** to stop the program at a certain instruction, typically a function name. Creating a breakpoint:
 
@@ -826,6 +910,8 @@ Deleting a breakpoint by number:
 (gdb) del 19
 ```
 
+### 2. Watchpoints (`watch`) are similar but pause the program when the value of a specified variable changes.
+
 You can use **watchpoints** to tell the program to run until the specified variable `p` changes value:
 
 ```console
@@ -841,18 +927,22 @@ GDB takes the process being debugged and modifies its machine code. It stomps on
 Single step through the code, and after each instruction, see if `p` has changed. This can be really slow unless youh have special hardware support for watchpoints. Many CPUs, including x86-64, have this support.
 
 ### Extending GDB
+
 ```console
 define pl
   print *(long *) $arg1
 end
 
-(gdb) pl x 
+(gdb) pl x
 ```
+
 The point here is that debugging tool should be extensive and programable
-* one example is `emacs/src/.gdbinit`
-> `GDB` supports either python or lisp
+
+- one example is `emacs/src/.gdbinit`
+  > `GDB` supports either python or lisp
 
 ### Remote Debugging
+
 If two machines have different architecture, there can be an issue that we need to translate the machine code from one to another <br />
 For example, from `x86-64` to `arm64`
 
@@ -911,4 +1001,222 @@ This makes GDB run on some virtual machine or something?
 
 ```console
 (gdb) up/down
+```
+
+## GDB Example 1
+
+### Step 1: Writing the Program
+
+Create a file named `factorial.c` with the following code:
+
+```c
+#include <stdio.h>
+
+int factorial(int n) {
+    if (n == 0) {
+        return 1;
+    } else {
+        return n * factorial(n); // Bug: should be n-1
+    }
+}
+
+int main() {
+    int number = 5;
+    printf("Factorial of %d is %d\n", number, factorial(number));
+    return 0;
+}
+```
+
+Notice the intentional bug in the `factoria`l`function: it calls`factorial(n)`instead of`factorial(n - 1)`, leading to an infinite recursion.
+
+### Step 2: Compiling the Program with Debug Information
+
+Compile the program with the `-g` flag to include debugging information:
+
+```shell
+$ gcc -g3 -o factorial factorial.c
+```
+
+### Step 3: Starting GDB
+
+Start GDB with the compiled program:
+
+```shell
+$ gdb ./factorial
+```
+
+### Step 4: Setting a Breakpoint
+
+Set a breakpoint at the `factorial` function to observe its behavior:
+
+```console
+(gdb) break factorial
+```
+
+### Step 5: Running the Program
+
+Run the program within GDB. It will start executing and stop when it reaches the `factorial` function:
+
+```console
+(gdb) run
+```
+
+### Step 6: Stepping Through the Code
+
+Once GDB hits the breakpoint, you can step through the code line by line to observe the behavior. Use the `next` command to go to the next line without stepping into other functions:
+
+```console
+(gdb) next
+```
+
+However, since we're interested in seeing the recursive calls, use the step command to `step` into the recursive calls:
+
+```console
+(gdb) step
+```
+
+After a few steps, it will become apparent that the function never reaches the base case (`n == 0`) because the decrement (`n - 1`) is missing, causing infinite recursion.
+
+### Step 7: Identifying the Bug
+
+At this point, you'll likely realize the bug: the function calls itself with the same value of `n` each time, instead of decrementing `n`. To confirm, you can print the value of `n` at each step:
+
+```console
+(gdb) print n
+```
+
+### Step 8: Fixing the Bug
+
+Exit GDB and fix the bug in the `factorial.c` file:
+
+```c
+return n * factorial(n - 1);
+```
+
+### Step 9: Recompile and Re-test
+
+After fixing the bug, recompile the program and test it again to ensure it now works correctly:
+
+```shell
+$ gcc -g3 -o factorial factorial.c
+$ ./factorial
+```
+
+## GDB Example 2
+
+### Step 1: The Program with a Bug
+
+Create a file named `sort.c` with the following code:
+
+```c
+#include <stdio.h>
+
+void bubbleSort(int arr[], int n) {
+    int i, j, tmp;
+    for (i = 0; i < n-1; i++) {
+        for (j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                // Swap the elements
+                tmp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = tmp;
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    bubbleSort(arr, n);
+    printf("Sorted array: \n");
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+```
+
+### Step 2: Compiling with Debug Information
+
+Compile the program with the `-g` flag to include debugging information:
+
+```shell
+$ gcc -g -o sort sort.c
+```
+
+### Step 3: Starting GDB
+
+Launch GDB with the compiled program:
+
+```shell
+$ gdb ./sort
+```
+
+### Step 4: Setting Breakpoints
+
+Set a breakpoint at the `bubbleSort` function to start debugging from the sorting logic:
+
+```console
+(gdb) break bubbleSort
+```
+
+### Step 5: Running the Program
+
+Start the program execution within GDB:
+
+```console
+(gdb) run
+```
+
+When GDB hits the breakpoint, you're ready to start debugging the `bubbleSort` function.
+
+### Step 6: Inspecting Variables and Stepping Through the Code
+
+Use the `step` command to execute the code line by line, and use the `print` command to inspect variables:
+
+```console
+(gdb) next
+(gdb) print i
+(gdb) print j
+(gdb) print arr[j]
+```
+
+This allows you to observe how the variables change as the program executes, helping to identify where things might be going wrong.
+
+Step 7: Using Watchpoints
+If you suspect that a variable is being changed unexpectedly, you can set a watchpoint on it:
+
+```console
+(gdb) watch arr[j]
+```
+
+This will pause execution whenever `arr[j]` is modified, letting you examine the context of the change.
+
+### Step 8: Continuing and Stepping into Functions
+
+To proceed with execution until the next breakpoint or watchpoint, use the `continue` command. If you want to `step` into a function call (if there were any in this example), you could use the step command instead of `next` to descend into the function.
+
+### Step 9: Viewing the Call Stack
+
+If the program was more complex and called multiple functions, you might lose track of how you got to the current point of execution. Use the `backtrace` (or `bt`) command to view the call stack:
+
+```console
+(gdb) backtrace
+```
+
+### Step 10: Conditional Breakpoints
+
+Imagine you want to break only when a certain condition is true, such as when `i` is a specific value. Set a conditional breakpoint like this:
+
+```console
+(gdb) break bubbleSort if i == 5
+```
+
+### Step 11: Finishing Function Execution
+
+If you're in the middle of a function and want to run until it returns, use the `finish` command. This is useful for skipping over the rest of a function once you've seen what you need.
+
+```console
+(gdb) finish
 ```

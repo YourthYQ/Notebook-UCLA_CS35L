@@ -85,7 +85,7 @@ Makefiles support special variables within a rule:
 
 `$^` represents all the dependencies
 
-`$<` represents the first one
+`$<` represents the first one dependency
 
 For example:
 
@@ -99,6 +99,8 @@ which can be expanded to:
 ```shell
 $ gcc -o output input1.o input2.o`
 ```
+
+## Ignoring Errors
 
 `-` (dash) instructs `make` to ignore errors from the command.
 
