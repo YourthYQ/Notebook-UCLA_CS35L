@@ -183,13 +183,13 @@ M-: (funcall function &rest arguments)      this call function with specific arg
 > This file is likely an **auto-save** file. Emacs periodically saves the content you're editing into an auto-save file. This is not usually the main file but a backup to prevent data loss in case of a crash.
 >
 > `.#midterm-answers.txt` <br>
-This file appears to be a **lock** file. Emacs uses lock files to indicate that a file is being edited, to prevent concurrent editing sessions on the same file which could lead to conflicts or data loss.
+> This file appears to be a **lock** file. Emacs uses lock files to indicate that a file is being edited, to prevent concurrent editing sessions on the same file which could lead to conflicts or data loss.
 >
 > `midterm-answers.txt` <br>
-This is likely the main file that contains the content for the midterm answers.
+> This is likely the main file that contains the content for the midterm answers.
 >
 > `midterm-answers.txt~` <br>
-This file is likely a **backup** file. Emacs (and many other text editors) creates a backup of the original file when you start editing, appending a tilde ~ to the end of the filename.
+> This file is likely a **backup** file. Emacs (and many other text editors) creates a backup of the original file when you start editing, appending a tilde ~ to the end of the filename.
 
 ## Regular expressions(regex)
 
@@ -224,6 +224,8 @@ p1\|p2          any match for p1 or p2
 [^^-]           char that is not ‘^’ or  not ‘-‘
 [^^]            char that is not ‘^’
 [^-]            char that is not ‘-‘
+
+^\d{9}$ == ^[0-9]{9}$
 ```
 
 ### How can Character Class (with `[]`) handle special characters?
